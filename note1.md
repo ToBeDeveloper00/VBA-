@@ -587,11 +587,7 @@ Sub BordersIndexDemo()
 
 
   With rngCell.Borders(xlInsideVertical)'内部垂直
-
-
   .LineStyle = xlContinuous
-
-
   .Weight = xlThin
 
 
