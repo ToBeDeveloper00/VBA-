@@ -1,8 +1,3 @@
-  
-
-
-
-
 # 1.使用 QRMaker.ocx控件生成二维码
 
 ```
@@ -614,8 +609,6 @@ Sub BordersIndexDemo()
 
 End Sub
 ```
-
-
 
 
 
