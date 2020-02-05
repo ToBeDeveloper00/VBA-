@@ -563,20 +563,20 @@ End Sub
 
 ```
 Sub BordersIndexDemo()
-  Dim rngCell As Range
-  Set rngCell = Range("B2:F8")
-  With rngCell.Borders(xlInsideHorizontal)'内部水平
-  .LineStyle = xlDot
-  .Weight = xlThin
-  .ColorIndex = 5
-  End With
-  With rngCell.Borders(xlInsideVertical)'内部垂直
-  .LineStyle = xlContinuous
-  .Weight = xlThin
-  .ColorIndex = 5
-  End With
-  rngCell.BorderAround xlContinuous, xlMedium, 5
-  Set rngCell = Nothing
+    Dim rngCell As Range
+    Set rngCell = Range("B2:F8")
+    With rngCell.Borders(xlInsideHorizontal)'内部水平
+        .LineStyle = xlDot
+        .Weight = xlThin
+        .ColorIndex = 5
+    End With
+    With rngCell.Borders(xlInsideVertical)'内部垂直
+        .LineStyle = xlContinuous
+        .Weight = xlThin
+        .ColorIndex = 5
+    End With
+    rngCell.BorderAround xlContinuous, xlMedium, 5
+    Set rngCell = Nothing
 End Sub
 ```
 
