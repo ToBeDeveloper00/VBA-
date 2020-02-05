@@ -285,13 +285,21 @@ End Sub
 
 ```
 Dim d As Object
-
-
 Set d = CreateObject("Scripting.Dictionary")
-
-
-​
 ```
+
+### Exitsts方法
+
+## 数组
+
+将单元格区域赋值给数组进行处理，会大幅提高计算速度。
+
+```
+Dim arr() As Variant
+arr = Range("A1:A4")
+```
+
+
 
 ## 使用InputBox函数显示对话框供用户输入数据
 
