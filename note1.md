@@ -580,5 +580,43 @@ Sub BordersIndexDemo()
 End Sub
 ```
 
+# 生成票号
 
+```
+Public Function getNewNum(numType As String, yuanNum As String) As String
+    Dim dangRi As String
+    dangRi = CStr(Format(Date, "yymmdd"))
+    Dim xinNum As String
+    xinNum = "001"
+    Dim qianStr As String
+    Dim isChaXun As Integer
+    Dim jiNum As String
+    Dim jiRi As String   
+
+    qianStr = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B5").Value))
+    jiNum = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B1").Value))
+    isChaXun = Val(ThisWorkbook.Sheets("金额转换页").Range("C1").Value)
+    jiRi = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B3").Value))
+    If dangRi = jiRi Then
+        If (Right(yuanNum, 3) <> jiNum) And (isChaXun < 1) Then
+            xinNum = CStr(Format(Val(jiNum) + 1, "000"))
+        Else
+            xinNum = jiNum
+        End If
+    End If
+    ThisWorkbook.Sheets("金额转换页").Range("B1").Value = xinNum
+    ThisWorkbook.Sheets("金额转换页").Range("B3").Value = dangRi
+
+    getNewNum = qianStr & dangRi & xinNum
+
+End Function
+```
+
+```
+Sub 生成票号()
+    Dim RiQiStr As String
+    RiQiStr = Trim(Range("B3"))
+    Range("B1") = getNewNum("", RiQiStr)
+End Sub
+```
 
