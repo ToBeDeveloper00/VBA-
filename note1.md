@@ -299,8 +299,6 @@ Dim arr() As Variant
 arr = Range("A1:A4")
 ```
 
-
-
 ## 使用InputBox函数显示对话框供用户输入数据
 
 ```
@@ -501,8 +499,6 @@ Sheets("Sheet2").Range("A1").PasteSpecial Paste:=xlPasteValues '粘贴数值
 
 ### 4.9.1设置单元格文本字符串格式
 
-
-
 ```vb
 Sub CellCharacter()
     With Range("A1")
@@ -584,18 +580,18 @@ Sub BordersIndexDemo()
 End Sub
 ```
 
-Borders(index)属性返回单个Border对象，其参数index取值可为以下：
+Borders\(index\)属性返回单个Border对象，其参数index取值可为以下：
 
-| 名称                   | 值   | 说明                                               |
-| :--------------------- | :--- | :------------------------------------------------- |
-| **xlDiagonalDown**     | 5    | 从区域中每个单元格的左上角到右下角的边框。         |
-| **xlDiagonalUp**       | 6    | 从区域中每个单元格的左下角到右上角的边框。         |
-| **xlEdgeBottom**       | 9    | 区域底部的边框。                                   |
-| **xlEdgeLeft**         | 7    | 区域左边缘的边框。                                 |
-| **xlEdgeRight**        | 10   | 区域右边缘的边框。                                 |
-| **xlEdgeTop**          | 8    | 区域顶部的边框。                                   |
-| **xlInsideHorizontal** | 12   | 区域中所有单元格的水平边框（区域以外的边框除外）。 |
-| **xlInsideVertical**   | 11   | 区域中所有单元格的垂直边框（区域以外的边框除外）。 |
+| 名称 | 值 | 说明 |
+| :--- | :--- | :--- |
+| **xlDiagonalDown** | 5 | 从区域中每个单元格的左上角到右下角的边框。 |
+| **xlDiagonalUp** | 6 | 从区域中每个单元格的左下角到右上角的边框。 |
+| **xlEdgeBottom** | 9 | 区域底部的边框。 |
+| **xlEdgeLeft** | 7 | 区域左边缘的边框。 |
+| **xlEdgeRight** | 10 | 区域右边缘的边框。 |
+| **xlEdgeTop** | 8 | 区域顶部的边框。 |
+| **xlInsideHorizontal** | 12 | 区域中所有单元格的水平边框（区域以外的边框除外）。 |
+| **xlInsideVertical** | 11 | 区域中所有单元格的垂直边框（区域以外的边框除外）。 |
 
 去除边框
 
@@ -701,4 +697,6 @@ Sub 生成票号()
     Range("B1") = getNewNum("", RiQiStr)
 End Sub
 ```
+
+
 
