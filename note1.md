@@ -499,73 +499,69 @@ Sheets("Sheet2").Range("A1").PasteSpecial Paste:=xlPasteValues '粘贴数值
 
 ## 4.9 设置字符格式
 
-```
+### 4.9.1设置单元格文本字符串格式
+
+
+
+```vb
 Sub CellCharacter()
-
-
-  With Range("A1")
-
-
-  .Clear
-
-
-  .Value = "Y=X2+1"
-
-
-  .Characters(4, 1).Font.Superscript = True'将第4个字符设置为上标
-
-
-  .Characters(1, 1).Font.ColorIndex = 3
-
-
-  .Font.Size = 20
-
-
-  End With
-
-
+    With Range("A1")
+        .Clear
+        .Value = "Y=X2+1"
+        .Characters(4, 1).Font.Superscript = True '将第4个字符设置为上标
+        .Characters(1, 1).Font.ColorIndex = 3
+        .Font.Size = 20
+    End With
 End Sub
 ```
 
-通过Range对象的Characters属性来操作指定的字符。Characters属性返回一个Characters对象，代表对象文字的字符区域。Characters属性的语法格式如下`Characters(Start, Length)`
+通过Range对象的Characters属性来操作指定的字符。
+
+Characters属性返回一个Characters对象，代表对象文字的字符区域。Characters属性的语法格式如下
+
+```
+Characters(Start, Length)
+```
+
+### 4.9.2 设置图形对象文本字符格式
+
+如下示例为A3单元格批注添加指定文本，并设置字符格式。
+
+```vb
+Sub ShapeCharacter()
+    If Range("A3").Comment Is Nothing Then
+        Range("A3").AddComment Text:=""
+    End If
+    With Range("A3").Comment
+        .Text Text:="Microsoft Excel 2016"
+        .Shape.TextFrame.Characters(17).Font.ColorIndex = 3'返回从第17个字符开始到最后一个字符的字符串
+    End With
+End Sub
+```
+
+TextFrame属性返回Shape对象的文本框对象，而Characters属性返回其中的文本字符。
 
 ## 4.10 单元格区域添加边框
 
-使用Range对象的Borders集合可以快速地对单元格区域全部边框应用相同的格式。Range对象的BorderAround方法可以快速地为单元格区域添加外边框。
+使用Range对象的Borders集合可以快速地对单元格区域全部边框应用相同的格式。
+
+Range对象的BorderAround方法可以快速地为单元格区域添加外边框。
 
 ```
 Sub AddBorders()
-
-
-  Dim rngCell As Range
-
-
-  Set rngCell = Range("B2:F8")
-
-
-  With rngCell.Borders
-
-
-  .LineStyle = xlContinuous'边框线条的样式
-
-
-  .Weight = xlThin'设置边框线条粗细
-
-
-  .ColorIndex = 5'设置边框线条颜色
-
-
-  End With
-
-
-  rngCell.BorderAround xlContinuous, xlMedium, 5'添加一个加粗外边框
-
-
-  Set rngCell = Nothing
-
-
+    Dim rngCell As Range
+    Set rngCell = Range("B2:F8")
+    With rngCell.Borders
+        .LineStyle = xlContinuous '边框线条的样式
+        .Weight = xlThin '设置边框线条粗细
+        .ColorIndex = 5 '设置边框线条颜色
+    End With
+    rngCell.BorderAround xlContinuous, xlMedium, 5 '添加一个加粗外边框
+    Set rngCell = Nothing
 End Sub
 ```
+
+![image-20200206164323610](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206164323610.png)
 
 在单元格区域中应用多种边框格式
 
@@ -587,6 +583,8 @@ Sub BordersIndexDemo()
     Set rngCell = Nothing
 End Sub
 ```
+
+
 
 # 生成票号
 
