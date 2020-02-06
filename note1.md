@@ -57,7 +57,7 @@ Sub qrCodeTest()
 End Sub
 ```
 
-# #2.裁剪图片
+# 2.裁剪图片
 
 ```
 ActiveSheet.Cells(1, 1).Select
@@ -227,7 +227,50 @@ Sub 生成票号()
 End Sub
 ```
 
+# 通过文件对话框选择文件
 
+```vb
+Sub 选择文件()
+    Application.DisplayAlerts = False
+    Dim fd As FileDialog, fn As String
+    Dim wb As Workbook, sht As Worksheet, n As Long
+    Dim i As Long, IRow As Long
+    Dim wt As Worksheet
+    Dim strFind As String, strReplace As String
+    Dim strSchool As String
+    Dim JRow As Long, j As Long
+    Dim arr() As Variant
+    Dim s1 As String
+    Set fd = Application.FileDialog(msoFileDialogFilePicker)
+    With fd
+        .Title = "打开文件"
+        .AllowMultiSelect = False
+        .InitialFileName = ThisWorkbook.Path & "\"
+        .Filters.Clear
+        .Filters.Add "Excel文件", "*.xls;*.xlsx"
+    End With
+    If fd.Show = -1 Then
+        For n = 1 To fd.SelectedItems.Count
+            fn = fd.SelectedItems(n)
+            Set wb = Workbooks.Open(fn)
+            Set sht = wb.Worksheets(1)
+            Set wt = ThisWorkbook.Worksheets(1)
+            IRow = wt.Range("A" & wt.Rows.Count).End(xlUp).Row
+            ********************
+        	
+        	********************
+            wb.Save
+            'wb.Close
+        Next
+        Beep
+        MsgBox "已完成！"
+    Else
+        MsgBox "请选择文件"
+        Exit Sub
+    End If
+    Application.DisplayAlerts = True
+End Sub
+```
 
 
 
@@ -735,3 +778,24 @@ Add (Type, AlertStyle, Operator, Formula1, Formula2)
 | **xlValidateWholeNumber** | 1    | 全部数值。                   |
 
 参数Formula2指定数据验证公式的第二部分。仅当Operator为xlBetween或xlNotBetween时有效。
+
+## 4.14 判断单元格公式是否存在错误
+
+Excel公式返回的结果可能是一个错误的文本，包含#NULL、#DIV/0!、#VALUE！、#REF！、#NAME?、#NUM！和#N/A等。
+
+通过判断Range对象中的Value属性的返回结果是否为错误值，可得知公式是否存在错误。
+
+```VB
+Sub FormulaIsError()
+    If VBA.IsError(Range("A1").Value) = True Then
+        MsgBox "A1单元格错误类型为:" & Range("A1").Text
+    Else
+        MsgBox "A1单元格公式结果为:" & Range("A1").Value
+    End If
+End Sub
+```
+
+IsError函数判断表达式是否为一个错误值，如果是则返回逻辑值True，否则返回逻辑值False。
+
+## 4.15批量删除所有错误值
+
