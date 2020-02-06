@@ -57,7 +57,7 @@ Sub qrCodeTest()
 End Sub
 ```
 
-## 2.裁剪图片
+# #2.裁剪图片
 
 ```
 ActiveSheet.Cells(1, 1).Select
@@ -186,6 +186,50 @@ For Each Sh In ActiveSheet.Shapes
 Next Sh 
   '利用循环就把图片对象都给删除了。
 ```
+
+# 生成票号
+
+```
+Public Function getNewNum(numType As String, yuanNum As String) As String
+    Dim dangRi As String
+    dangRi = CStr(Format(Date, "yymmdd"))
+    Dim xinNum As String
+    xinNum = "001"
+    Dim qianStr As String
+    Dim isChaXun As Integer
+    Dim jiNum As String
+    Dim jiRi As String   
+
+    qianStr = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B5").Value))
+    jiNum = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B1").Value))
+    isChaXun = Val(ThisWorkbook.Sheets("金额转换页").Range("C1").Value)
+    jiRi = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B3").Value))
+    If dangRi = jiRi Then
+        If (Right(yuanNum, 3) <> jiNum) And (isChaXun < 1) Then
+            xinNum = CStr(Format(Val(jiNum) + 1, "000"))
+        Else
+            xinNum = jiNum
+        End If
+    End If
+    ThisWorkbook.Sheets("金额转换页").Range("B1").Value = xinNum
+    ThisWorkbook.Sheets("金额转换页").Range("B3").Value = dangRi
+
+    getNewNum = qianStr & dangRi & xinNum
+
+End Function
+```
+
+```
+Sub 生成票号()
+    Dim RiQiStr As String
+    RiQiStr = Trim(Range("B3"))
+    Range("B1") = getNewNum("", RiQiStr)
+End Sub
+```
+
+
+
+
 
 ## 限制工作簿的使用次数
 
@@ -609,7 +653,7 @@ End Sub
 
 ```
 Private Sub Worksheet_SelectionChange(ByVal Target As Range)
-    Cells.Interior.ColorIndex = xlNone
+    Cells.Interior.ColorIndex = xlNone'清除所有单元格的内部填充颜色
     Target.Interior.ColorIndex = 5
 End Sub
 ```
@@ -635,6 +679,8 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 End Sub
 ```
 
+命名区域HighLightArea(示例文件已指定B2:H15单元格区域)
+
 ![image-20200206165756300](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206165756300.png)
 
 3.结合条件格式定义名称高亮显示行
@@ -658,45 +704,59 @@ End Sub
 
 ![image-20200206170134713](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206170134713.png)
 
-# 生成票号
+## 4.12 动态设置单元格数据验证序列
 
-```
-Public Function getNewNum(numType As String, yuanNum As String) As String
-    Dim dangRi As String
-    dangRi = CStr(Format(Date, "yymmdd"))
-    Dim xinNum As String
-    xinNum = "001"
-    Dim qianStr As String
-    Dim isChaXun As Integer
-    Dim jiNum As String
-    Dim jiRi As String   
+【数据验证】对话框如下图
 
-    qianStr = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B5").Value))
-    jiNum = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B1").Value))
-    isChaXun = Val(ThisWorkbook.Sheets("金额转换页").Range("C1").Value)
-    jiRi = Trim(CStr(ThisWorkbook.Sheets("金额转换页").Range("B3").Value))
-    If dangRi = jiRi Then
-        If (Right(yuanNum, 3) <> jiNum) And (isChaXun < 1) Then
-            xinNum = CStr(Format(Val(jiNum) + 1, "000"))
-        Else
-            xinNum = jiNum
+![image-20200206171335869](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206171335869.png)
+
+如下示例代码通过VBA将示例工作簿中工作表“Office 2016"以外的工作表名称设置为工作表“Office 2016"中C3单元格的数据验证序列。
+
+数据验证序列是由逗号分隔的字符串，两个逗号之间的空字符串将被忽略。
+
+```vb
+Sub SheetsNameValidation()
+    Dim i As Integer
+    Dim strList As String
+    Dim wksSht As Worksheet
+    For Each wksSht In Worksheets
+        If wksSht.Name <> "Office 2016" Then
+            strList = strList & wksSht.Name & ","
         End If
-    End If
-    ThisWorkbook.Sheets("金额转换页").Range("B1").Value = xinNum
-    ThisWorkbook.Sheets("金额转换页").Range("B3").Value = dangRi
-
-    getNewNum = qianStr & dangRi & xinNum
-
-End Function
-```
-
-```
-Sub 生成票号()
-    Dim RiQiStr As String
-    RiQiStr = Trim(Range("B3"))
-    Range("B1") = getNewNum("", RiQiStr)
+    Next wksSht
+    With Worksheets("Office 2016").Range("C3").Validation
+        .Delete
+        .Add Type:=xlValidateList, Formula1:=strList
+    End With
+    Set wksSht = Nothing
 End Sub
 ```
 
+```
+Sub DeleteValidation()
+    Range("C3").Validation.Delete
+End Sub
+```
 
+![image-20200206171703131](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206171703131.png)
 
+Validation对象的Add方法向指定区域内添加数据验证，其语法格式如下：
+
+```
+Add (Type, AlertStyle, Operator, Formula1, Formula2)
+```
+
+参数Type是必需的，代表数据验证类型。其值可为以下常量之一：
+
+| 名称                      | 值   | 说明                         |
+| :------------------------ | :--- | :--------------------------- |
+| **xlValidateCustom**      | 7    | 使用任意公式验证数据有效性。 |
+| **xlValidateDate**        | 4    | 日期值。                     |
+| **xlValidateDecimal**     | 2    | 数值。                       |
+| **xlValidateInputOnly**   | 0    | 仅在用户更改值时进行验证。   |
+| **xlValidateList**        | 3    | 值必须存在于指定列表中。     |
+| **xlValidateTextLength**  | 6    | 文本长度。                   |
+| **xlValidateTime**        | 5    | 时间值。                     |
+| **xlValidateWholeNumber** | 1    | 全部数值。                   |
+
+参数Formula2指定数据验证公式的第二部分。仅当Operator为xlBetween或xlNotBetween时有效。
