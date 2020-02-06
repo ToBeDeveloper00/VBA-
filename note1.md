@@ -482,10 +482,8 @@ End Function
 
 ## 打开工作簿时禁止更新链接
 
-```
+```vb
 Application.AskToUpdateLinks=False'关闭更新数据源链接的提示
-
-
 Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 ```
 
@@ -495,47 +493,24 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 
 xlDown/xlToRight/xlToLeft/xlUp
 
-```
+```vb
 Dim ERow as Long
-
-
-Erow=Range("A" 
-&
- Rows.Count).End(xlUp).Row
+Erow=Range("A" & Rows.Count).End(xlUp).Row
 ```
 
 ## 4.3 复制单元格区域
 
 注意：使用PasteSpecial方法时指定xlPasteAll（粘贴全部），并不包括粘贴列宽
 
-```
+```vb
 Sub CopyWithSameColumnWidths()
-
-
-  Sheets("Sheet1").Range("A1").CurrentRegion.Copy
-
-
-  With Sheets("Sheet2").Range("A1")
-
-
-  .PasteSpecial xlPasteColumnWidths
-
-
-  .PasteSpecial xlPasteAll
-
-
-  End With
-
-
-  Application.CutCopyMode = False
-
-
+    Sheets("Sheet1").Range("A1").CurrentRegion.Copy
+    With Sheets("Sheet2").Range("A1")
+        .PasteSpecial xlPasteColumnWidths
+        .PasteSpecial xlPasteAll
+    End With
+    Application.CutCopyMode = False
 End Sub
-
-
-​
-
-
 Sheets("Sheet2").Range("A1").PasteSpecial Paste:=xlPasteValues '粘贴数值
 ```
 
