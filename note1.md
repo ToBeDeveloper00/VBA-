@@ -565,16 +565,16 @@ End Sub
 
 在单元格区域中应用多种边框格式
 
-```
+```vb
 Sub BordersIndexDemo()
     Dim rngCell As Range
     Set rngCell = Range("B2:F8")
-    With rngCell.Borders(xlInsideHorizontal)'内部水平
+    With rngCell.Borders(xlInsideHorizontal) '内部水平
         .LineStyle = xlDot
         .Weight = xlThin
         .ColorIndex = 5
     End With
-    With rngCell.Borders(xlInsideVertical)'内部垂直
+    With rngCell.Borders(xlInsideVertical) '内部垂直
         .LineStyle = xlContinuous
         .Weight = xlThin
         .ColorIndex = 5
@@ -584,7 +584,83 @@ Sub BordersIndexDemo()
 End Sub
 ```
 
+Borders(index)属性返回单个Border对象，其参数index取值可为以下：
 
+| 名称                   | 值   | 说明                                               |
+| :--------------------- | :--- | :------------------------------------------------- |
+| **xlDiagonalDown**     | 5    | 从区域中每个单元格的左上角到右下角的边框。         |
+| **xlDiagonalUp**       | 6    | 从区域中每个单元格的左下角到右上角的边框。         |
+| **xlEdgeBottom**       | 9    | 区域底部的边框。                                   |
+| **xlEdgeLeft**         | 7    | 区域左边缘的边框。                                 |
+| **xlEdgeRight**        | 10   | 区域右边缘的边框。                                 |
+| **xlEdgeTop**          | 8    | 区域顶部的边框。                                   |
+| **xlInsideHorizontal** | 12   | 区域中所有单元格的水平边框（区域以外的边框除外）。 |
+| **xlInsideVertical**   | 11   | 区域中所有单元格的垂直边框（区域以外的边框除外）。 |
+
+去除边框
+
+```vb
+Sub Restore()
+    Columns("B:F").Borders.LineStyle = xlNone
+End Sub
+```
+
+## 4.11 高亮显示单元格区域
+
+高亮显示是指以某种方式突出显示活动单元格或指定的单元格区域，使得用户可以一目了然地获取某些信息。
+
+1.高亮显示单个单元格
+
+```
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Cells.Interior.ColorIndex = xlNone
+    Target.Interior.ColorIndex = 5
+End Sub
+```
+
+![image-20200206165636905](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206165636905.png)
+
+2.高亮显示行列
+
+```
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Dim rngHighLight As Range
+    Dim rngCell1 As Range, rngCell2 As Range
+    Cells.Interior.ColorIndex = xlNone
+    Set rngCell1 = Intersect(ActiveCell.EntireColumn, _
+        [HighLightArea])
+    Set rngCell2 = Intersect(ActiveCell.EntireRow, [HighLightArea])
+    On Error Resume Next
+    Set rngHighLight = Application.Union(rngCell1, rngCell2)
+    rngHighLight.Interior.ThemeColor = 9
+    Set rngCell1 = Nothing
+    Set rngCell2 = Nothing
+    Set rngHighLight = Nothing
+End Sub
+```
+
+![image-20200206165756300](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206165756300.png)
+
+3.结合条件格式定义名称高亮显示行
+
+```
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    ThisWorkbook.Names.Add "ActRow", ActiveCell.Row
+End Sub
+```
+
+![image-20200206165917049](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206165917049.png)
+
+4.结合条件格式定义名称高亮显示行列
+
+```
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    ThisWorkbook.Names.Add "ActRow", ActiveCell.Row
+    ThisWorkbook.Names.Add "ActCol", ActiveCell.Column
+End Sub
+```
+
+![image-20200206170134713](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206170134713.png)
 
 # 生成票号
 
