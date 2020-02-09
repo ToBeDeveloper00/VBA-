@@ -257,8 +257,8 @@ Sub 选择文件()
             Set wt = ThisWorkbook.Worksheets(1)
             IRow = wt.Range("A" & wt.Rows.Count).End(xlUp).Row
             ********************
-        	
-        	********************
+
+            ********************
             wb.Save
             'wb.Close
         Next
@@ -271,8 +271,6 @@ Sub 选择文件()
     Application.DisplayAlerts = True
 End Sub
 ```
-
-
 
 ## 限制工作簿的使用次数
 
@@ -534,8 +532,6 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 
 注：如果工作簿和工作表名称中包含空格等特殊字符，则还需要在外侧加单引号。
 
-
-
 ```vb
    Sub 添加超链接()
     Dim i As Long
@@ -548,7 +544,7 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
         If Not SheetExists(ShtName) Then
             ThisWorkbook.Worksheets.Add after:=Worksheets(Worksheets.Count)
             ActiveSheet.Name = ShtName
-            
+
         End If
         Set Sht = Worksheets(ShtName)
         wt.Activate
@@ -556,10 +552,7 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
         Sht.Hyperlinks.Add Anchor:=Sht.Range("A1"), Address:="", SubAddress:=wt.Name & "!A1", TextToDisplay:="返回"
     Next
 End Sub
-
 ```
-
-
 
 # 四、Range操作
 
@@ -728,7 +721,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 End Sub
 ```
 
-命名区域HighLightArea(示例文件已指定B2:H15单元格区域)
+命名区域HighLightArea\(示例文件已指定B2:H15单元格区域\)
 
 ![image-20200206165756300](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200206165756300.png)
 
@@ -797,22 +790,22 @@ Add (Type, AlertStyle, Operator, Formula1, Formula2)
 
 参数Type是必需的，代表数据验证类型。其值可为以下常量之一：
 
-| 名称                      | 值   | 说明                         |
-| :------------------------ | :--- | :--------------------------- |
-| **xlValidateCustom**      | 7    | 使用任意公式验证数据有效性。 |
-| **xlValidateDate**        | 4    | 日期值。                     |
-| **xlValidateDecimal**     | 2    | 数值。                       |
-| **xlValidateInputOnly**   | 0    | 仅在用户更改值时进行验证。   |
-| **xlValidateList**        | 3    | 值必须存在于指定列表中。     |
-| **xlValidateTextLength**  | 6    | 文本长度。                   |
-| **xlValidateTime**        | 5    | 时间值。                     |
-| **xlValidateWholeNumber** | 1    | 全部数值。                   |
+| 名称 | 值 | 说明 |
+| :--- | :--- | :--- |
+| **xlValidateCustom** | 7 | 使用任意公式验证数据有效性。 |
+| **xlValidateDate** | 4 | 日期值。 |
+| **xlValidateDecimal** | 2 | 数值。 |
+| **xlValidateInputOnly** | 0 | 仅在用户更改值时进行验证。 |
+| **xlValidateList** | 3 | 值必须存在于指定列表中。 |
+| **xlValidateTextLength** | 6 | 文本长度。 |
+| **xlValidateTime** | 5 | 时间值。 |
+| **xlValidateWholeNumber** | 1 | 全部数值。 |
 
 参数Formula2指定数据验证公式的第二部分。仅当Operator为xlBetween或xlNotBetween时有效。
 
 ## 4.14 判断单元格公式是否存在错误
 
-Excel公式返回的结果可能是一个错误的文本，包含#NULL、#DIV/0!、#VALUE！、#REF！、#NAME?、#NUM！和#N/A等。
+Excel公式返回的结果可能是一个错误的文本，包含\#NULL、\#DIV/0!、\#VALUE！、\#REF！、\#NAME?、\#NUM！和\#N/A等。
 
 通过判断Range对象中的Value属性的返回结果是否为错误值，可得知公式是否存在错误。
 
@@ -829,4 +822,6 @@ End Sub
 IsError函数判断表达式是否为一个错误值，如果是则返回逻辑值True，否则返回逻辑值False。
 
 ## 4.15批量删除所有错误值
+
+
 
