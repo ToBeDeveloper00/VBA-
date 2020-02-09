@@ -532,8 +532,30 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 
 # 单元格插入超链接
 
+注：如果工作簿和工作表名称中包含空格等特殊字符，则还需要在外侧加单引号。
+
+
+
 ```vb
-    ActiveSheet.Hyperlinks.Add Anchor:=Range("B13"), Address:="", SubAddress:="lcc!A1", TextToDisplay:="lcc"
+   Sub 添加超链接()
+    Dim i As Long
+    Dim ShtName As String
+    Dim Sht As Worksheet
+    Dim wt As Worksheet
+    Set wt = Sheet1
+    For i = 2 To 30
+        ShtName = Trim(wt.Cells(i, 1))
+        If Not SheetExists(ShtName) Then
+            ThisWorkbook.Worksheets.Add after:=Worksheets(Worksheets.Count)
+            ActiveSheet.Name = ShtName
+            
+        End If
+        Set Sht = Worksheets(ShtName)
+        wt.Activate
+        wt.Hyperlinks.Add Anchor:=wt.Cells(i, 1), Address:="", SubAddress:=Sht.Name & "!A1", TextToDisplay:=wt.Cells(i, 1).Value
+        Sht.Hyperlinks.Add Anchor:=Sht.Range("A1"), Address:="", SubAddress:=wt.Name & "!A1", TextToDisplay:="返回"
+    Next
+End Sub
 
 ```
 
