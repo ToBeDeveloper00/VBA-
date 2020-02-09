@@ -530,6 +530,15 @@ Application.AskToUpdateLinks=False'关闭更新数据源链接的提示
 Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 ```
 
+# 单元格插入超链接
+
+```vb
+    ActiveSheet.Hyperlinks.Add Anchor:=Range("B13"), Address:="", SubAddress:="lcc!A1", TextToDisplay:="lcc"
+
+```
+
+
+
 # 四、Range操作
 
 ## 4.2取得最后一个非空单元格
