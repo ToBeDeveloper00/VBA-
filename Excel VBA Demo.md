@@ -1,3 +1,7 @@
+
+
+
+
 # 1.使用 QRMaker.ocx控件生成二维码
 
 ```
@@ -823,5 +827,256 @@ IsError函数判断表达式是否为一个错误值，如果是则返回逻辑�
 
 ## 4.15批量删除所有错误值
 
+使用CurrentRegion属性取得包含A1单元格的当前区域。
 
+```
+Sub DeleteError()
+    Dim rngRange As Range
+    Dim rngCell As Range
+    Set rngRange = Range("a1").CurrentRegion
+    For Each rngCell In rngRange
+        If VBA.IsError(rngCell.Value) = True Then
+            rngCell.Value = ""
+        End If
+    Next rngCell
+    Set rngCell = Nothing
+    Set rngRange = Nothing
+End Sub
+```
 
+通过定位功能可获取错误值的单元格对象，并批量修改。
+
+利用单元格对象的SpecialCells方法定位所有错误值。
+
+```vb
+Sub DeleteAllError()
+    On Error Resume Next
+    Dim rngRange As Range
+    Set rngRange = Range("a1").CurrentRegion.SpecialCells _
+        (xlCellTypeConstants, xlErrors)
+    If Not rngRange Is Nothing Then
+        rngRange.Value = ""
+    End If
+    Set rngRange = Nothing
+End Sub
+```
+
+单元格对象的SpecialCells方法返回一个Range对象，该对象代表与指定类型和值匹配的所有单元格，其语法格式如下：
+
+```vb
+SpecialCells(Type,Value)
+```
+
+参数与Type是必需的，用于指定定位类型，可为如下表列举的XlCellType常量之一。
+
+| 常量                           | 值    | 说明                       |
+| ------------------------------ | ----- | -------------------------- |
+| xlCellTypeAllFormatConditions  | -4172 | 任何格式的单元格           |
+| xlCellTypeAllValidation        | -4174 | 含有验证条件的单元格       |
+| xlCellTypeBlanks               | 4     | 空单元格                   |
+| xlCellTypeComments             | -4144 | 含有注释的单元格           |
+| xlCellTypeConstants            | 2     | 含有常量的单元格           |
+| xlCellTypeFormulas             | -4123 | 含有公式的单元格           |
+| xlCellTypeLastCell             | 11    | 已用区域中的最后一个单元格 |
+| xlCellTypeSameFormatConditions | -4173 | 具有相同的格式的单元格     |
+| xlCellTypeSameValidation       | -4175 | 验证条件相同的单元格       |
+| xlCellTypeVisible              | 12    | 所有可见单元格             |
+
+如果参数Type为xlCellTypeConstants或xlCellTypeFormulas，则该参数可用于确定结果中应包含哪几类单元格，参数Value可为以下列举的XlSpecialCellsValue常量之一。将这些值相加可使此方法返回多种类型的单元格。默认情况下，将选择所有常量或公式，无论类型如何。
+
+| 常量             | 值   | 说明                 |
+| :--------------- | :--- | :------------------- |
+| **xlErrors**     | 16   | 有错误的单元格。     |
+| **xlLogical**    | 4    | 具有逻辑值的单元格。 |
+| **xlNumbers**    | 1    | 具有数值的单元格。   |
+| **xlTextValues** | 2    | 具有文本的单元格。   |
+
+## 4.17 判断单元格是否存在批注
+
+```vb
+Function blnComment(ByVal rngRange As Range) As Boolean
+    If rngRange.Cells(1).Comment Is Nothing Then
+        blnComment = False
+    Else
+        blnComment = True
+    End If
+End Function
+```
+
+返回单元格区域rngRange的第一个单元格是否存在批注。
+
+注：对于合并单元格的批注，批注对象从属于合并单元格的第一个单元格。
+
+Range对象的Comment属性返回批注对象，如果指定的单元格不存在批注，则该属性返回Nothing。
+
+## 4.18 为单元格添加批注
+
+```vb
+Sub Comment_Add()
+    With Range("B5")
+        If .Comment Is Nothing Then
+            .AddComment Text:=.Text
+            .Comment.Visible = True
+        End If
+    End With
+End Sub
+```
+
+使用Range对象的AddComment方法为单元格添加批注。
+
+## 编辑批注文本
+
+使用批注对象的Text方法，能够获取或修改单元格批注的文本。
+
+```vb
+Sub Comment_Add()
+    With Range("B5")
+        If .Comment Is Nothing Then
+            .AddComment Text:=.Text
+            .Comment.Visible = True
+        End If
+    End With
+End Sub
+```
+
+Comment对象的Text方法的语法格式如下。
+
+```
+Text(Text,Start,Overwrite)
+```
+
+参数Text代表需要添加的文本。
+
+参数Start指定添加文本的起始位置。
+
+参数OrverWrite指定是否覆盖现有文本。默认值为False(新文字插入现有文字中)。
+
+vbCrLf常量代表回车换行符。
+
+## 4.21 显示图片批注
+
+为单元格批注添加背景图片或将图片作为批注的内容
+
+```vb
+Sub ChangeCommentShapeType()
+    With Range("B3").Comment
+        .Shape.Fill.UserPicture _
+            ThisWorkbook.Path & "\Logo.jpg"
+    End With
+End Sub
+```
+
+Comment对象的Shape属性返回批注对象的图形对象
+
+Fill属性能够返回FillFormat对象，该对象包括指定的图表或图形的填充格式属性，UserPicture方法为图形填充图像
+
+## 4.22 设置批注字体
+
+单元格批注的字体通过单元格批注的Shape对象中文本框对象(TextFrame)的字符对象(Characters)进行设置。TextFrame代表Shape对象中的文本框，包含文本框中的文字。
+
+```vb
+Sub CommentFont()
+    Dim objComment As Comment
+    For Each objComment In ActiveSheet.Comments
+        With objComment.Shape.TextFrame.Characters.Font
+            .Name = "微软雅黑"
+            .Bold = msoFalse
+            .Size = 14
+            .ColorIndex = 3
+        End With
+    Next objComment
+    Set objComment = Nothing
+End Sub
+
+```
+
+## 4.23 快速判断单元格区域是否存在合并单元格
+
+Range对象的MergeCells属性可以判断单元格区域是否包含合并单元格，如果该属性返回值为True，则表示区域包含合并单元格。
+
+```vb
+Sub IsMergeCell()
+    If Range("A1").MergeCells = True Then
+        MsgBox "包含合并单元格"
+    Else
+        MsgBox "没有包含合并单元格"
+    End If
+End Sub
+```
+
+对于单个单元格，直接通过MergeCells属性判断是否包含合并单元格。
+
+```vb
+Sub IsMerge()
+    If VBA.IsNull(Range("A1:E10").MergeCells) = True Then
+        MsgBox "包含合并单元格"
+    Else
+        MsgBox "没有包含合并单元格"
+    End If
+End Sub
+```
+
+当单元格区域中同时包含合并单元格和非合并单元格时，MergeCells属性将返回Null.
+
+## 4.24合并单元格时连接每个单元格内容
+
+在合并多个单元格时，将各个单元格的内容连接起来保存在合并后的单元格区域中。
+
+```vb
+Sub MergeValue()
+    Dim strText As String
+    Dim rngCell As Range
+    If TypeName(Selection) = "Range" Then
+        For Each rngCell In Selection
+            strText = strText & rngCell.Value
+        Next rngCell
+        Application.DisplayAlerts = False
+        Selection.Merge
+        Selection.Value = strText
+        Application.DisplayAlerts = True
+    End If
+    Set rngCell = Nothing
+End Sub
+```
+
+使用TypeName函数判断当前选定对象是否为Range对象。
+
+将DisplayAlerts属性设置为False，禁止Excel弹出警告对话框。
+
+## 4.25 取消合并时在每个单元格中保留内容
+
+```vb
+Sub UnMergeValue()
+    Dim strText As String
+    Dim i As Long, intCount As Integer
+    For i = 2 To Range("B1").End(xlDown).Row
+        With Cells(i, 1)
+            strText = .Value
+            intCount = .MergeArea.Count
+            .UnMerge
+            .Resize(intCount, 1).Value = strText
+        End With
+        i = i + intCount - 1
+    Next i
+End Sub
+```
+
+## 4.26 合并内容相同的单列连续单元格
+
+```vb
+Sub BackUp()
+    Dim intRow As Integer, i As Long
+    Application.DisplayAlerts = False
+    With ActiveSheet
+        intRow = .Range("A1").End(xlDown).Row
+        For i = intRow To 2 Step -1
+            If .Cells(i, 1).Value = .Cells(i - 1, 1).Value Then
+                .Range(.Cells(i - 1, 1), .Cells(i, 1)).Merge
+            End If
+        Next i
+    End With
+    Application.DisplayAlerts = True
+End Sub
+```
+
+使用For循环结构从最后一行开始，向上逐个判断相邻单元格内容的内容是否相同，如果相同则合并单元格区域。
