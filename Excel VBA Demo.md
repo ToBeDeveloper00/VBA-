@@ -558,6 +558,22 @@ Application.AskToUpdateLinks=True'将属性值恢复为默认状态
 End Sub
 ```
 
+## Split函数与数组的结合使用
+
+```vb
+Dim FileName As String, Arr As Variant
+Arr = Split(FileName, "-")
+PrefixStr = Arr(0)
+```
+
+## DisplayAlerts属性设置不显示警告框
+
+```vb
+Application.DisplayAlerts = False
+```
+
+
+
 # 四、Range操作
 
 ## 4.2取得最后一个非空单元格
