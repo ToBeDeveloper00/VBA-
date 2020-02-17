@@ -1097,3 +1097,67 @@ End Sub
 
 使用For循环结构从最后一行开始，向上逐个判断相邻单元格内容的内容是否相同，如果相同则合并单元格区域。
 
+## 4.27 查找包含指定字符串的所有单元格
+
+查找指定单元格区域中所有包含“BB"的单元格并通过背景颜色标识。使用Range对象的Find方法可以实现此要求。
+
+```vb
+Sub FindCells()
+    Dim rngCell As Range, rngResult As Range
+    Dim strFirstAddress As String
+    With Range("A1:E10")
+        Set rngCell = .Find(What:="BB", After:=.Cells(1), _
+            LookIn:=xlValues, LookAt:=xlPart)
+        If Not rngCell Is Nothing Then
+            strFirstAddress = rngCell.Address'保存第一个匹配单元格的引用地址。
+            Set rngResult = rngCell
+            Do
+                Set rngResult = Application.Union(rngResult, rngCell)
+                Set rngCell = .FindNext(rngCell)
+            Loop While rngCell.Address <> strFirstAddress'设置当查找到的单元格与第一个匹配单元格地址相同时停止查找。
+            rngResult.Interior.ColorIndex = 8'为单元格指定单元格内部填充颜色。
+        End If
+    End With
+    Set rngCell = Nothing
+    Set rngResult = Nothing
+End Sub
+```
+
+Range对象的Find方法可以在单元格区域中查找特定的信息，并返回Range对象。如果未发现匹配单元格，则返回Nothing。
+
+代码中的FindNext方法进行由Find方法设置的搜索，查找匹配相同条件的下一个单元格。当FindNext方法查找到指定查找区域的末尾时，该方法将重新从区域的第一个单元格继续搜索。
+
+应用于Range对象的Find方法的语法格式如下。
+
+```
+Find(What, After, LookIn, LookAt, SearchOrder, SearchDirection, MatchCase, MatchByte, SearchFormat)
+```
+
+其中，参数What指定要搜索的数据，可为字符串或任意 Microsoft Excel 数据类型。
+
+参数After用于确定开始搜索的位置，搜索过程将从该参数指定的单元格之后进行。参数After必须是区域中的单个单元格，从该单元格之后开始搜索，直到Find方法绕回到指定的单元格时，才结束搜索。
+
+参数LookIn指定要查找的信息类型，可为如下列举的xlFindLookin常量之一。
+
+| 名称           | 值    | 说明   |
+| -------------- | ----- | ------ |
+| **xlComments** | -4144 | 批注。 |
+| **xlFormulas** | -4123 | 公式。 |
+| **xlValues**   | -4163 | 值。   |
+
+参数LookAt可为xlWhole(完整匹配)或xlPart(部分匹配)。
+
+参数SearchOrder可为xlByRows(按行)或xlByColumns(按列)。
+
+参数SearchDirection指定搜索的方向，可为xlNext(向后，默认值)或xlPrevious(向前)。
+
+参数MatchCase指定查找时是否区分大小写，若为True则区分大小写，默认值为False。
+
+参数MatchByte指定是否进行字节匹配。若为True，则双字节字符仅匹配双字节字符。若为  **False**，则双字节字符可与其对等的单字节字符匹配。
+
+单字节指只占一个字，是英文字符。双字是占两个字节的，中文字符都占两个字节。
+
+参数SearchFormat指定搜索格式
+
+注：每次使用Find方法后，参数LookIn、LookAt、SearchOrder和MatchByte的设置将被保存。
+
