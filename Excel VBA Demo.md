@@ -1161,3 +1161,69 @@ Find(What, After, LookIn, LookAt, SearchOrder, SearchDirection, MatchCase, Match
 
 注：每次使用Find方法后，参数LookIn、LookAt、SearchOrder和MatchByte的设置将被保存。
 
+## 4.30 按指定条件自动筛选数据
+
+当需要在数据列表中检索符合指定条件的记录时，通常可以使用自动筛选功能实现。在vba中，使用Range集合的AutoFilter方法，可以实现如下视频所示的数据区域执行自动筛选操作。
+
+如下示例代码筛选"性别"字段内容为"男"的记录。
+
+```
+Sub DataFilter()
+    Worksheets("Sheet1").Range("A1").AutoFilter _
+        Field:=2, Criteria1:="男", Operator:=xlFilterValues
+End Sub
+```
+
+当AutoFilter方法应用于单个单元格时，Excel默认筛选区域为该单元格所在的当前区域，参数Field指定作为筛选基准字段(从列表左侧开始，最左侧的字段为第一个字段)的偏移量，此处参数值为2，指定筛选字段在筛选区域的第二列。参数Criteria1指定筛选条件为"男"。
+
+Range对象的AutoFilter方法筛选出符合条件的数据列表，其语法格式如下。
+
+```
+AutoFilter(Field, Criteria1, Operator, Criteria2, VisibleDropDown)
+```
+
+参数Field是可选的，为Variant类型，用于指定作为筛选基准字段的偏移量。
+
+参数Criteria1是可选的，为Variant类型，用于指定筛选条件(字符串，"男")。使用"="可搜索到空字段，使用"<>"可搜索到非空字段。如果省略该参数，则搜索条件为All。
+
+参数Operator是可选的，其值可为如下表列举的XlAutoFilterOperator常量之一。
+
+| 名称                  | 值   | 说明                                    |
+| --------------------- | ---- | --------------------------------------- |
+| **xlAnd**             | 1    | 条件 1 和条件 2 的逻辑与。              |
+| **xlBottom10Items**   | 4    | 显示最低值项（条件 1 中指定的项数）。   |
+| **xlBottom10Percent** | 6    | 显示最低值项（条件 1 中指定的百分数）。 |
+| **xlFilterCellColor** | 8    | 单元格颜色                              |
+| **xlFilterDynamic**   | 11   | 动态筛选                                |
+| **xlFilterFontColor** | 9    | 字体颜色                                |
+| **xlFilterIcon**      | 10   | 筛选图标                                |
+| **xlFilterValues**    | 7    | 筛选值                                  |
+| **xlOr**              | 2    | 条件 1 和条件 2 的逻辑或。              |
+| **xlTop10Items**      | 3    | 显示最高值项（条件 1 中指定的项数）。   |
+| **xlTop10Percent**    | 5    | 显示最高值项（条件 1 中指定的百分数）。 |
+
+注：使用xlAnd和xlOr可将参数Criteria1和Criteria2组合成复合筛选条件。
+
+参数Criteria2是可选的，指定第2个筛选条件。与Criteria1和Operator组成复合筛选条件。
+
+参数VisibleDropDown是可选的，如果其值为True(默认值)，则显示筛选字段自动筛选的下拉按钮。如果为False，则隐藏筛选字段自动筛选的下拉按钮。
+
+提示：在excel中执行/取消筛选的快捷键为Ctrl+Shift+L
+
+## 多条件筛选
+
+如下示例代码通过两次筛选，检索"性别"字段内容为"男"并且"年龄"字段为22~26的记录。
+
+```
+Sub Filter_MoreCriteria()
+    Application.ScreenUpdating = False
+    With Worksheets("Sheet1")
+        If .FilterMode = True Then .ShowAllData
+        .Range("A1").AutoFilter Field:=2, Criteria1:="男"
+        .Range("A1").AutoFilter Field:=3, Criteria1:=">=22", _
+            Operator:=xlAnd, Criteria2:="<=26"
+    End With
+    Application.ScreenUpdating = True
+End Sub
+```
+
