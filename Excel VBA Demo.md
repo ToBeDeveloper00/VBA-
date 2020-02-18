@@ -1163,11 +1163,11 @@ Find(What, After, LookIn, LookAt, SearchOrder, SearchDirection, MatchCase, Match
 
 ## 4.30 按指定条件自动筛选数据
 
-当需要在数据列表中检索符合指定条件的记录时，通常可以使用自动筛选功能实现。在vba中，使用Range集合的AutoFilter方法，可以实现如下视频所示的数据区域执行自动筛选操作。
+当需要在数据列表中检索符合指定条件的记录时，通常可以使用自动筛选功能实现。在vba中，使用Range集合的AutoFilter方法，可以实现对下图所示的数据区域执行自动筛选操作。
 
 如下示例代码筛选"性别"字段内容为"男"的记录。
 
-```
+```vb
 Sub DataFilter()
     Worksheets("Sheet1").Range("A1").AutoFilter _
         Field:=2, Criteria1:="男", Operator:=xlFilterValues
@@ -1212,9 +1212,11 @@ AutoFilter(Field, Criteria1, Operator, Criteria2, VisibleDropDown)
 
 ## 多条件筛选
 
+通过多次使用AutoFilter方法，能够实现数据列表的多条件筛选功能。
+
 如下示例代码通过两次筛选，检索"性别"字段内容为"男"并且"年龄"字段为22~26的记录。
 
-```
+```vb
 Sub Filter_MoreCriteria()
     Application.ScreenUpdating = False
     With Worksheets("Sheet1")
@@ -1226,4 +1228,6 @@ Sub Filter_MoreCriteria()
     Application.ScreenUpdating = True
 End Sub
 ```
+
+代码中使用FilterMode属性判断工作表是否处于筛选模式，如果是则显示当前筛选列表的所有数据。当工作表包含已筛选序列且该序列中含有隐藏行时，FilterMode属性的值为True。使用ShowAllData方法将显示所有数据，使当前筛选列表的所有行均可见。代码执行效果如下：
 
