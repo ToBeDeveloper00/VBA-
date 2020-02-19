@@ -1210,7 +1210,7 @@ AutoFilter(Field, Criteria1, Operator, Criteria2, VisibleDropDown)
 
 提示：在excel中执行/取消筛选的快捷键为Ctrl+Shift+L
 
-## 多条件筛选
+## 4.31 多条件筛选
 
 通过多次使用AutoFilter方法，能够实现数据列表的多条件筛选功能。
 
@@ -1231,3 +1231,84 @@ End Sub
 
 代码中使用FilterMode属性判断工作表是否处于筛选模式，如果是则显示当前筛选列表的所有数据。当工作表包含已筛选序列且该序列中含有隐藏行时，FilterMode属性的值为True。使用ShowAllData方法将显示所有数据，使当前筛选列表的所有行均可见。代码执行效果如下：
 
+## 4.32获取符合筛选条件的记录数
+
+在对工作表列表区域进行自动筛选时，在状态栏中将显示符合筛选条件的记录条数信息。
+
+通常，自动筛选的结果由多个不连续的区域组成，这些单元格区域的行数即为记录数。
+
+```vb
+Sub GetFilterRecordCount()
+    Dim rngRange As Range
+    Dim i As Long
+    Dim lngCount As Long
+    Dim lngAllCount As Long
+    With ActiveSheet
+        If .FilterMode Then
+            lngAllCount = .AutoFilter.Range.Rows.Count - 1'获取工作表筛选区域的记录总数
+            Set rngRange = .AutoFilter.Range.SpecialCells(xlCellTypeVisible)'获取工作表筛选后筛选区域中的可视区域。
+            For i = 1 To rngRange.Areas.Count
+                lngCount = lngCount + rngRange.Areas(i).Rows.Count
+            Next i
+            Set rngRange = Nothing
+            MsgBox "在 " & lngAllCount & " 条记录中找到 " & _
+                lngCount - 1 & " 个"
+        End If
+    End With
+End Sub
+```
+
+AutoFilter对象的Range属性返回工作表应用自动筛选的区域。
+
+Areas属性返回一个Areas集合，代表多重选定区域中的所有区域。Areas集合包含选定区域内的每一个离散的连续单元格区域的Range对象。
+
+## 4.33 判断筛选结果是否为空
+
+```vb
+Sub FilterIsEmpty()
+    With ActiveSheet.AutoFilter.Range.SpecialCells _
+        (xlCellTypeVisible)
+        If .Areas.Count = 1 And .Rows.Count = 1 Then
+            MsgBox "筛选结果为空"
+        End If
+    End With
+End Sub
+```
+
+## 4.34复制自动筛选后的数据区域
+
+```vb
+Sub CopyFilterResult()
+    With Worksheets("Sheet1")
+        If .FilterMode Then
+            .AutoFilter.Range.SpecialCells(xlCellTypeVisible).Copy _
+                Worksheets("Sheet2").Range("A1")
+        End If
+    End With
+End Sub
+```
+
+## 4.35 使用删除重复项获取不重复记录
+
+利用单元格区域的RemoveDuplicates方法可以去除重复值，从而获取不重复值列表，如下图所示。
+
+![image-20200219193619295](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200219193619295.png)
+
+示例代码如下。
+
+```vb
+Sub RemoveDuplicates()
+    Range("A1").CurrentRegion.Copy Range("E1")
+    Range("E1").CurrentRegion.RemoveDuplicates Columns:=1, Header:=xlYes'获取第1列不重复对应的所有记录，区域包括标题行
+End Sub
+```
+
+RemoveDuplicates方法语法格式如下。
+
+```
+RemoveDuplicates(Columns, Header)
+```
+
+参数Columns是必需的，指定包含重复信息的列的索引数组。当有多列时，可以使用Array(1,2)的形式表示。
+
+参数Header是可选的，指定第一行是否包含标题信息。默认值为xlNo；如果希望Excel自动判定，则应指定为XlGuess。
