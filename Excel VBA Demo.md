@@ -1312,3 +1312,20 @@ RemoveDuplicates(Columns, Header)
 参数Columns是必需的，指定包含重复信息的列的索引数组。当有多列时，可以使用Array(1,2)的形式表示。
 
 参数Header是可选的，指定第一行是否包含标题信息。默认值为xlNo；如果希望Excel自动判定，则应指定为XlGuess。
+
+这里在介绍下Range对象的CurrentRegion属性。该属性返回包含指定单元格在内的一个连续的矩形区域，例如
+
+```
+Range("B5").CurrentRegion.Select
+```
+
+执行这行代码后的效果如下图所示。
+
+而Worksheet对象的UsedRange属性返回工作表中已经使用的单元格围成的矩形区域，例如
+
+```
+Activesheet.UsedRange.Select '选中活动工作表中已经使用的单元格区域
+```
+
+关注微信公众号：**VBA168**
+每天更新Excel VBA经典代码，祝你工作和学习更轻松！
