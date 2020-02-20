@@ -1329,3 +1329,42 @@ Activesheet.UsedRange.Select '选中活动工作表中已经使用的单元格�
 
 关注微信公众号：**VBA168**
 每天更新Excel VBA经典代码，祝你工作和学习更轻松！
+
+## 4.41 数据排序
+
+在如图1所示数据列表中，需要按总成绩从高到低进行排序，示例代码如下。
+
+```vb
+Sub SortDemo()
+    Range("A1").Sort key1:="总成绩", order1:=xlDescending, _
+        Header:=xlYes
+End Sub
+```
+
+运行SortDemo过程，排序结果如图2所示。
+
+Range对象的Sort方法对区域进行排序，其语法格式如下。
+
+```
+Sort(Key1, Order1, Key2, Type, Order2, Key3, Order3, Header, OrderCustom, MatchCase, Orientation, SortMethod, DataOption1, DataOption2, DataOption3)
+```
+
+其中，参数Key1、Key2和Key3是可选的，分别指定第1排序字段、第2排序字段、第3排序字段，作为区域名称(字符串)或Range对象，以确定要排序的值。
+
+参数Order1、Order2和Order3是可选的，其值可为xlAscending，按升序对指定字段排序(默认值)；或者是xlDescending，按降序对指定字段排序。
+
+参数Header是可选的，用于指定第1行是否包含标题信息，其值可为xlGuess，表示由Excel确定是否有标题；xlNo，表示不包含标题(默认值)；xlYes，表示包含标题。
+
+Range对象的Sort方法最多可以指定3个排序字段，如下示例代码对图1所示数据集以“总成绩”、“学科1”和“学科2”分别为第1字段、第2字段和第3字段进行排序，排序结果如图3所示。
+
+```vb
+Sub SortDemoA()
+    Range("A1").Sort key1:="总成绩", order1:=xlDescending, _
+        key2:="学科1", order2:=xlDescending, _
+        key3:="学科2", order3:=xlDescending, _
+        Header:=xlYes
+End Sub
+```
+
+
+
