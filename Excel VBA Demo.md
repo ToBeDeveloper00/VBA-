@@ -1425,3 +1425,69 @@ End Sub
 第11行代码指定排序区域包含标题。
 
 第12行代码应用工作表排序。
+
+## 4.43 自定义排序
+
+在图1中所示的数据集中，如果希望按单元格区域E2:E6所列序列进行排序，需要先使用AddCustomList方法为应用程序添加自定义序列，示例代码如下。
+
+
+
+```vb
+Sub SortByLists()
+    Dim avntList As Variant, lngNum As Long
+    avntList = Range("E2:E6")
+    Application.AddCustomList avntList
+    lngNum = Application.GetCustomListNum(avntList)
+    Range("A1").Sort Key1:=Range("A1"), _
+        Order1:=xlAscending, Header:=xlYes, _
+        OrderCustom:=lngNum + 1
+    Application.DeleteCustomList lngNum
+End Sub
+```
+
+第4行代码通过Application对象的AddCustomList方法为应用程序添加一个自定义序列。AddCustomList方法为自定义自动填充(或自定义排序)添加自定义列表，其语法格式如下。
+
+`AddCustomList(ListArray, ByRow)`
+
+其中，参数ListArray是必需的，可以为字符串数组或Range对象。参数ByRow是可选的，仅当 *ListArray* 为 **Range** 对象时使用。如果为 **True**，则使用区域中的每一行创建自定义列表；如果为  **False**，则使用区域中的每一列创建自定义列表。如果省略该参数，并且区域中的行数比列数多（或者行数与列数相等），则 Microsoft Excel  使用区域中的每一列创建自定义列表。如果省略该参数，并且区域中的列数比行数多，则 Microsoft Excel 使用区域中的每一行创建自定义列表。
+
+如果要添加的列表已经存在，则AddCustomList方法不起作用。
+
+第5行返回avnList数组在自定义序列中的序号。
+
+第6行使用Sort方法对当前数据排序，其中Sort的参数指定了第1关键字Key1，默认为升序排列，同时设置包含标题，并且指定按新添加的自定义序列索引号排序。
+
+注：参数OrderCustom指定在自定义排序次序列表中的基于1的整数偏移，在指定该参数时需在自定义序列号基础上加1。
+
+第9行代码使用DeleteCustomList方法删除新添加的自定义序列。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
