@@ -2,6 +2,11 @@
 
 
 
+# 微信公众号
+
+关注微信公众号：**VBA168**
+每天更新Excel VBA经典代码，祝你工作和学习更轻松！
+
 # 1.使用 QRMaker.ocx控件生成二维码
 
 ```
@@ -1327,8 +1332,7 @@ Range("B5").CurrentRegion.Select
 Activesheet.UsedRange.Select '选中活动工作表中已经使用的单元格区域
 ```
 
-关注微信公众号：**VBA168**
-每天更新Excel VBA经典代码，祝你工作和学习更轻松！
+
 
 ## 4.41 数据排序
 
@@ -1366,5 +1370,58 @@ Sub SortDemoA()
 End Sub
 ```
 
+## 4.42 多关键字排序
+
+使用Range对象的Sort方法对区域进行排序时，同时最多只能指定3个关键字，当需要按照超过3个关键字对区域进行排序时，可以通过多次执行Sort方法实现。需要注意的是，在排序时应按照各关键字的倒叙顺序。例如，如果按照A→B→C→D的关键字顺序进行排序，则应按D→C→B→A的顺序执行Sort方法。
+
+图1 带排序数据
+
+如图1所示数据表中，需要按"总成绩"、"基础知识"、"教育学"和"心理学"的成绩降序排列，实例代码如下。
+
+```vb
+Sub SortByKeysA()
+    With Range("A1")
+        .Sort Key1:="心理学", order1:=xlDescending, Header:=xlYes
+        .Sort Key1:="教育学", order1:=xlDescending, Header:=xlYes
+        .Sort Key1:="基础知识", order1:=xlDescending, Header:=xlYes
+        .Sort Key1:="总成绩", order1:=xlDescending, Header:=xlYes
+    End With
+End Sub
+```
+
+运行以上过程，结果如图2所示。
 
 
+
+使用Range对象的Sort方法对区域进行超过3个关键字排序时，需要多次执行Sort方法，而通过Worksheet对象的Sort方法则可以一次完成。如下示例代码实现与上面示例代码相同的排序功能。
+
+```vb
+Sub MoreKeySort()
+    With ActiveSheet.Sort.SortFields
+        .Clear
+        .Add Key:=Range("G1"), SortOn:=xlSortOnValues, Order:=xlDescending
+        .Add Key:=Range("B1"), SortOn:=xlSortOnValues, Order:=xlDescending
+        .Add Key:=Range("C1"), SortOn:=xlSortOnValues, Order:=xlDescending
+        .Add Key:=Range("D1"), SortOn:=xlSortOnValues, Order:=xlDescending
+    End With
+    With ActiveSheet.Sort
+        .SetRange Range("A1").CurrentRegion
+        .Header = xlYes
+        .Apply
+    End With
+End Sub
+```
+
+第3行代码清除工作表所有的SortFields对象。
+
+第4~7行分别在Sort对象中添加SortFields对象。SortFields对象的Add方法创建新的排序字段，并返回SortFields对象，其语法格式如下。
+
+`Add(Key, SortOn, Order, CustomOrder,  DataOption)`
+
+该方法的各参数分别对应于Range对象Sort方法的参数。
+
+第10行代码指定Sort对象的排序区域。
+
+第11行代码指定排序区域包含标题。
+
+第12行代码应用工作表排序。
