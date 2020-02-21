@@ -579,7 +579,7 @@ Application.DisplayAlerts = False
 
 
 
-# 四、Range操作
+# 第4章 Range操作
 
 ## 4.2取得最后一个非空单元格
 
@@ -1461,9 +1461,69 @@ End Sub
 
 第9行代码使用DeleteCustomList方法删除新添加的自定义序列。
 
+# 第6章 使用Shape对象
 
+在Excel中Shape对象代表绘图层中的对象，如自选图形、任意多边形、OLE对象(Object Linking and Embedding，对象连接与嵌入)或图形。
 
+![1](D:\微信公众号\6.1\1.JPG)
 
+## 6.1 遍历工作表中的Shape对象
+
+```vb
+Sub ForNextAllShapes()
+    Dim intRow As Integer
+    Dim i As Integer
+    Dim strShapeTypeConst As String
+    intRow = 2
+    With Sheets("Shape对象").Shapes
+        For i = 1 To .Count
+            With .Range(i)
+                Sheets("统计").Cells(intRow, 1) = i
+                Sheets("统计").Cells(intRow, 2) = .Name
+                Sheets("统计").Cells(intRow, 3) = .Type
+                Sheets("统计").Cells(intRow, 4) = .AutoShapeType
+                If .Type = 1 Then
+                    Select Case .AutoShapeType
+                        Case 1
+                            strShapeTypeConst = "矩形"
+                        Case 5
+                            strShapeTypeConst = "圆角矩形"
+                        Case 92
+                            strShapeTypeConst = "五角星"
+                    End Select
+                Else
+                    Select Case .Type
+                        Case 5
+                            strShapeTypeConst = "任意多边形"
+                        Case 8
+                            strShapeTypeConst = "窗体控件"
+                        Case 9
+                            strShapeTypeConst = "线条"
+                        Case 12
+                            strShapeTypeConst = "OLE 控件对象"
+                        Case 13
+                            strShapeTypeConst = "图片"
+                    End Select
+                End If
+            End With
+            Sheets("统计").Cells(intRow, 5) = strShapeTypeConst
+            intRow = intRow + 1
+        Next i
+    End With
+End Sub
+```
+
+第7行代码使用了Shapes对象的Count属性返回"Shapes对象"工作表中Shape对象的总数量。
+
+第8行代码使用Shapes对象的Range属性返回Shape对象集合中图形的一个子集，其语法格式如下。
+
+`expression.Range(Index)`
+
+其中，参数Index可以是指定图形索引号的整数，或者是图形名称的字符串，也可以是包含整数或字符串的数组。
+
+注：此处的Range是Shape对象的属性，返回一个ShapeRange对象，它代表Shapes集合中形状的子集，不同于工作表中的Range对象。
+
+第9~12行代码将Shape对象的序号、名称、Type属性值和AutoShapeType属性值写入"统计"工作表中。
 
 
 
