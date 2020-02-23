@@ -4,10 +4,121 @@
 
 # 微信公众号
 
-关注微信公众号：**VBA168**
-每天更新Excel VBA经典代码，祝你工作和学习更轻松！
+------
 
-# 1.使用 QRMaker.ocx控件生成二维码
+微信公众号：VBA168
+
+淘宝店铺地址：https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-21233576391.4.1af0683dzrx3oU&id=584940166162
+
+关注微信公众号，每天及时接收Excel VBA经典示例讲解。
+
+淘宝店铺提供Excel定制服务。
+
+祝你工作和学习更轻松！
+
+------
+
+
+
+# Excel对象
+
+我们每天重复着打开、关闭工作簿，输入、清除单元格内容的操作，其实都是在操作Excel的对象。如下操作：
+
+- 退出Excel程序是操作Application对象；
+- 新建工作簿是操作Workbook对象；
+- 新建工作表是操作Worksheet对象；
+- 删除单元格是操作Range对象；
+- 插入图表是操作Chart对象。
+
+实际上，VBA程序就是用代码记录下来的一个或一串操作，如想在"Sheet1"工作表的A1单元格输入数值"100"，完整的代码为：
+
+`Application.Worksheets("Sheet1").Range("A1").Value=100`
+
+无论是用动作还是代码完成任务，都是在操作对象。所以编写VBA程序，就是用VBA语句引用对象并有目的地操作它。
+
+我们日常工作中经常会操作下表所列的对象。
+
+| 对象        | 对象说明                                                     |
+| ----------- | ------------------------------------------------------------ |
+| Application | 代表Excel应用程序(如果在Word中使用VBA，就代表Word应用程序)   |
+| Workbook    | 代表Excel的工作簿，一个Workbook对象代表一个工作簿文件        |
+| Worksheet   | 代表Excel的工作表，一个Worksheet对象代表工作簿中的一张普通工作表 |
+| Range       | 代表Excel中的单元格，可以是单个单元格，也可以是单元格区域。  |
+
+记住这些常用的对象，并能熟练地运用代码操作它们，就可以执行一些常用的操作。
+
+## Application对象
+
+Application对象代表Excel程序本身，它就像一棵树的根，Excel中所有的对象都以它为起点。实际编程时，会经常用到它的许多属性和方法。
+
+### 1.用ScreenUpdating属性设置是否更新屏幕上的内容
+
+在使用Excel解决一个问题时，往往需要执行多步操作或计算。无论是通过手动还是VBA代码完成这些操作，默认情况下，Excel都会将每步操作所得的结果显示在屏幕上。
+
+Application对象的ScreenUpdating属性就是控制屏幕更新的开关，将该属性设置为False，Excel将会关闭屏幕更新。
+
+```
+Application.ScreenUpdating=False   '关闭屏幕更新
+
+Application.ScreenUpdating=True    '重新开启屏幕更新
+```
+
+如果在程序中将ScreenUpdating属性设置为False，一定要记得在程序结束前将其重新设置为True，否则后面执行的程序也不会更新屏幕上的内容。
+
+### 2.设置DisplayAlerts属性禁止显示警告对话框
+
+当我们在Excel中执行某些操作，如删除工作表时，Excel会显示一个警告对话框，让我们确定是否需要执行这个操作，如图1所示。
+
+![1](D:\微信公众号\别怕，Excel VBA起始很简单\4.2\1.JPG)
+
+图1 删除工作表时显示的警告对话框
+
+出于很多原因，我们都希望Excel在程序执行的过程中，不显示警告对话框，这可以通过设置Application对象的DisplayAlerts属性为False来实现。
+
+在下面示例代码中，如果不写第2行代码，那么在执行程序中，每删除一个工作表，就会弹出一次警告框，而且只有点击【删除】按钮才会执行删除操作。如果要删除100张工作表，就需要点击【删除】按钮100次。
+
+```vb
+Sub DelSht_2()
+    Application.DisplayAlerts = False           '设置不显示警告对话框
+    Dim sht As Worksheet
+    For Each sht In Worksheets
+        If sht.Name <> ActiveSheet.Name Then  '判断sht引用的是否是活动工作表
+            sht.Delete                        '删除sht引用的工作表
+        End If
+    Next sht
+    Application.DisplayAlerts = True            '重新设置显示警告对话框
+End Sub
+```
+
+如果在程序中将DisplayAlerts属性设置为False，一定要记得在程序结束前将其重新设置为True，否则后面执行任何操作都不会弹出警告对话框。
+
+### 3.借助WorksheetFunction属性使用工作表函数
+
+常用的工作表函数，如SUMIF、VLOOKUP、MATCH和COUNTIF等函数VBA中没有，但是可以使用Application对象的WorksheetFunction属性来调用这些函数。
+
+
+
+图2 编写代码统计A1:B50单元格区域中大于1000的数据个数
+
+如想统计图2中A1:B50单元格区域中大于1000的数值有多少个，代码可以写为：
+
+```vb
+Sub CountTest_2()
+    Dim mycount As Integer
+    mycount = Application.WorksheetFunction.CountIf(Range("A1:B50"), ">1000")
+    MsgBox "A1:B50中大于1000的单元格个数为：" & mycount
+End Sub
+```
+
+注：如果VBA中已经有了相同功能的函数，就不能再通过WorksheetFunction属性引用工作表中的函数，否则会出错。并且，不是所有的工作表函数都能通过WorkshetFunction 属性来调用。
+
+
+
+
+
+# 实例代码
+
+## #1.使用 QRMaker.ocx控件生成二维码
 
 ```
 Sub qrCodeTest()
@@ -66,7 +177,7 @@ Sub qrCodeTest()
 End Sub
 ```
 
-# 2.裁剪图片
+## 2.裁剪图片
 
 ```
 ActiveSheet.Cells(1, 1).Select
@@ -196,7 +307,7 @@ Next Sh
   '利用循环就把图片对象都给删除了。
 ```
 
-# 生成票号
+## 生成票号
 
 ```
 Public Function getNewNum(numType As String, yuanNum As String) As String
@@ -1482,8 +1593,8 @@ Sub ForNextAllShapes()
                 Sheets("统计").Cells(intRow, 2) = .Name
                 Sheets("统计").Cells(intRow, 3) = .Type
                 Sheets("统计").Cells(intRow, 4) = .AutoShapeType
-                If .Type = 1 Then
-                    Select Case .AutoShapeType
+                If .Type = 1 Then'判断对象是否为自选图形
+                    Select Case .AutoShapeType'判断自选图形对象的类型
                         Case 1
                             strShapeTypeConst = "矩形"
                         Case 5
@@ -1525,25 +1636,259 @@ End Sub
 
 第9~12行代码将Shape对象的序号、名称、Type属性值和AutoShapeType属性值写入"统计"工作表中。
 
+第13行代码使用Shape对象的Type属性判断对象是否为自选图形。
+
+Shape对象的Type属性返回或设置一个MsoShapeType值，该值代表Shape对象的类型，MsoShapeType常量值与说明如下表所示。
+
+| 名称                     | 值   | 说明              |
+| ------------------------ | ---- | ----------------- |
+| **msoAutoShape**         | 1    | 自选图形。        |
+| **msoCallout**           | 2    | 标注。            |
+| **msoCanvas**            | 20   | 画布。            |
+| **msoChart**             | 3    | 图。              |
+| **msoComment**           | 4    | 批注。            |
+| **msoDiagram**           | 21   | 图表。            |
+| **msoEmbeddedOLEObject** | 7    | 嵌入的 OLE 对象。 |
+| **msoFormControl**       | 8    | 窗体控件。        |
+| **msoFreeform**          | 5    | 任意多边形。      |
+| **msoGroup**             | 6    | 组合。            |
+| **msoIgxGraphic**        | 24   | SmartArt 图形     |
+| **msoInk**               | 22   | 墨迹。            |
+| **msoInkComment**        | 23   | 墨迹批注。        |
+| **msoLine**              | 9    | 线条。            |
+| **msoLinkedOLEObject**   | 10   | 链接 OLE 对象。   |
+| **msoLinkedPicture**     | 11   | 链接图片。        |
+| **msoMedia**             | 16   | 媒体。            |
+| **msoOLEControlObject**  | 12   | OLE 控件对象。    |
+| **msoPicture**           | 13   | 图片。            |
+| **msoPlaceholder**       | 14   | 占位符。          |
+| **msoScriptAnchor**      | 18   | 脚本定位标记。    |
+| **msoShapeTypeMixed**    | -2   | 混和形状类型。    |
+| **msoTable**             | 19   | 表。              |
+| **msoTextBox**           | 17   | 文本框。          |
+| **msoTextEffect**        | 15   | 文本效果。        |
+
+Shape对象的AutoShapeType属性返回或设置一个MsoAutoShapeType值，该值指定Shape或ShapeRange对象的类型，该对象必须是自选图形，不能是直线、任意多边形图形或连接符。MsoAutoShapeType常量值与说明如下表所示。
+
+| 名称                                         | 值   | 说明                                                       |
+| -------------------------------------------- | ---- | ---------------------------------------------------------- |
+| **msoShape16pointStar**                      | 94   | 十六角星。                                                 |
+| **msoShape24pointStar**                      | 95   | 二十四角星。                                               |
+| **msoShape32pointStar**                      | 96   | 三十二角星。                                               |
+| **msoShape4pointStar**                       | 91   | 四角星。                                                   |
+| **msoShape5pointStar**                       | 92   | 五角星。                                                   |
+| **msoShape8pointStar**                       | 93   | 八角星。                                                   |
+| **msoShapeActionButtonBackorPrevious**       | 129  | **“后退”**或**“上一个”**按钮。支持鼠标单击和鼠标移过操作。 |
+| **msoShapeActionButtonBeginning**            | 131  | **“开始”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonCustom**               | 125  | 不带默认图片或文本的按钮。支持鼠标单击和鼠标移过操作。     |
+| **msoShapeActionButtonDocument**             | 134  | **“文档”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonEnd**                  | 132  | **“结束”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonForwardorNext**        | 130  | **“前进”**或**“下一个”**按钮。支持鼠标单击和鼠标移过操作。 |
+| **msoShapeActionButtonHelp**                 | 127  | **帮助**按钮。支持鼠标单击和鼠标移过操作。                 |
+| **msoShapeActionButtonHome**                 | 126  | **“主页”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonInformation**          | 128  | **“信息”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonMovie**                | 136  | **“影片”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonReturn**               | 133  | **“返回”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeActionButtonSound**                | 135  | **“声音”**按钮。支持鼠标单击和鼠标移过操作。               |
+| **msoShapeArc**                              | 25   | 弧形。                                                     |
+| **msoShapeBalloon**                          | 137  | 气球。                                                     |
+| **msoShapeBentArrow**                        | 41   | 带 90 度圆角的箭头。                                       |
+| **msoShapeBentUpArrow**                      | 44   | 带 90 度直角的箭头。默认情况下上指。                       |
+| **msoShapeBevel**                            | 15   | 凹凸效果。                                                 |
+| **msoShapeBlockArc**                         | 20   | 空心弧。                                                   |
+| **msoShapeCan**                              | 13   | 圆柱形。                                                   |
+| **msoShapeChevron**                          | 52   | V 形。                                                     |
+| **msoShapeCircularArrow**                    | 60   | 带 180 度圆角的箭头。                                      |
+| **msoShapeCloudCallout**                     | 108  | 云形标注。                                                 |
+| **msoShapeCross**                            | 11   | 十字形。                                                   |
+| **msoShapeCube**                             | 14   | 立方。                                                     |
+| **msoShapeCurvedDownArrow**                  | 48   | 上弧形箭头。                                               |
+| **msoShapeCurvedDownRibbon**                 | 100  | 下凸弯带形横幅。                                           |
+| **msoShapeCurvedLeftArrow**                  | 46   | 右弧形箭头。                                               |
+| **msoShapeCurvedRightArrow**                 | 45   | 左弧形箭头。                                               |
+| **msoShapeCurvedUpArrow**                    | 47   | 下弧形箭头。                                               |
+| **msoShapeCurvedUpRibbon**                   | 99   | 上凸弯带形。                                               |
+| **msoShapeDiamond**                          | 4    | 菱形。                                                     |
+| **msoShapeDonut**                            | 18   | 环形。                                                     |
+| **msoShapeDoubleBrace**                      | 27   | 双大括号。                                                 |
+| **msoShapeDoubleBracket**                    | 26   | 双括号。                                                   |
+| **msoShapeDoubleWave**                       | 104  | 双波形。                                                   |
+| **msoShapeDownArrow**                        | 36   | 下箭头。                                                   |
+| **msoShapeDownArrowCallout**                 | 56   | 带下箭头的标注。                                           |
+| **msoShapeDownRibbon**                       | 98   | 中心区域位于弯带末端下方的弯带形。                         |
+| **msoShapeExplosion1**                       | 89   | 爆炸形。                                                   |
+| **msoShapeExplosion2**                       | 90   | 爆炸形。                                                   |
+| **msoShapeFlowchartAlternateProcess**        | 62   | 其他过程流程图符号。                                       |
+| **msoShapeFlowchartCard**                    | 75   | 资料卡流程图符号。                                         |
+| **msoShapeFlowchartCollate**                 | 79   | 对照流程图符号。                                           |
+| **msoShapeFlowchartConnector**               | 73   | 联系流程图符号。                                           |
+| **msoShapeFlowchartData**                    | 64   | 数据流程图符号。                                           |
+| **msoShapeFlowchartDecision**                | 63   | 决策流程图符号。                                           |
+| **msoShapeFlowchartDelay**                   | 84   | 延期流程图符号。                                           |
+| **msoShapeFlowchartDirectAccessStorage**     | 87   | 磁鼓流程图符号。                                           |
+| **msoShapeFlowchartDisplay**                 | 88   | 显示流程图符号。                                           |
+| **msoShapeFlowchartDocument**                | 67   | 文档流程图符号。                                           |
+| **msoShapeFlowchartExtract**                 | 81   | 摘录流程图符号。                                           |
+| **msoShapeFlowchartInternalStorage**         | 66   | 内部贮存流程图符号。                                       |
+| **msoShapeFlowchartMagneticDisk**            | 86   | 磁盘流程图符号。                                           |
+| **msoShapeFlowchartManualInput**             | 71   | 手动输入流程图符号。                                       |
+| **msoShapeFlowchartManualOperation**         | 72   | 手动操作流程图符号。                                       |
+| **msoShapeFlowchartMerge**                   | 82   | 合并流程图符号。                                           |
+| **msoShapeFlowchartMultidocument**           | 68   | 多文档流程图符号。                                         |
+| **msoShapeFlowchartOffpageConnector**        | 74   | 离页连接符流程图符号。                                     |
+| **msoShapeFlowchartOr**                      | 78   | “或者”流程图符号。                                         |
+| **msoShapeFlowchartPredefinedProcess**       | 65   | 预定义过程流程图符号。                                     |
+| **msoShapeFlowchartPreparation**             | 70   | 准备流程图符号。                                           |
+| **msoShapeFlowchartProcess**                 | 61   | 过程流程图符号。                                           |
+| **msoShapeFlowchartPunchedTape**             | 76   | 资料带流程图符号。                                         |
+| **msoShapeFlowchartSequentialAccessStorage** | 85   | 磁带流程图符号。                                           |
+| **msoShapeFlowchartSort**                    | 80   | 排序流程图符号。                                           |
+| **msoShapeFlowchartStoredData**              | 83   | 库存数据流程图符号。                                       |
+| **msoShapeFlowchartSummingJunction**         | 77   | 汇总连接流程图符号。                                       |
+| **msoShapeFlowchartTerminator**              | 69   | 终止流程图符号。                                           |
+| **msoShapeFoldedCorner**                     | 16   | 折角形。                                                   |
+| **msoShapeHeart**                            | 21   | 心形。                                                     |
+| **msoShapeHexagon**                          | 10   | 六边形。                                                   |
+| **msoShapeHorizontalScroll**                 | 102  | 横卷形。                                                   |
+| **msoShapeIsoscelesTriangle**                | 7    | 等腰三角形。                                               |
+| **msoShapeLeftArrow**                        | 34   | 左箭头。                                                   |
+| **msoShapeLeftArrowCallout**                 | 54   | 带左箭头的标注。                                           |
+| **msoShapeLeftBrace**                        | 31   | 左大括号。                                                 |
+| **msoShapeLeftBracket**                      | 29   | 左括号。                                                   |
+| **msoShapeLeftRightArrow**                   | 37   | 左右双向箭头。                                             |
+| **msoShapeLeftRightArrowCallout**            | 57   | 带左右双向箭头的标注。                                     |
+| **msoShapeLeftRightUpArrow**                 | 40   | 左右上三向箭头。                                           |
+| **msoShapeLeftUpArrow**                      | 43   | 左上双向箭头。                                             |
+| **msoShapeLightningBolt**                    | 22   | 闪电形。                                                   |
+| **msoShapeLineCallout1**                     | 109  | 带边框和水平标注线的标注。                                 |
+| **msoShapeLineCallout1AccentBar**            | 113  | 带水平强调线的标注。                                       |
+| **msoShapeLineCallout1BorderandAccentBar**   | 121  | 带边框和水平强调线的标注。                                 |
+| **msoShapeLineCallout1NoBorder**             | 117  | 带水平线的标注。                                           |
+| **msoShapeLineCallout2**                     | 110  | 带对角直线的标注。                                         |
+| **msoShapeLineCallout2AccentBar**            | 114  | 带对角标注线和强调线的标注。                               |
+| **msoShapeLineCallout2BorderandAccentBar**   | 122  | 带边框、对角直线和强调线的标注。                           |
+| **msoShapeLineCallout2NoBorder**             | 118  | 不带边框和对角标注线的标注。                               |
+| **msoShapeLineCallout3**                     | 111  | 带倾斜线的标注。                                           |
+| **msoShapeLineCallout3AccentBar**            | 115  | 带倾斜标注线和强调线的标注。                               |
+| **msoShapeLineCallout3BorderandAccentBar**   | 123  | 带边框、倾斜标注线和强调线的标注。                         |
+| **msoShapeLineCallout3NoBorder**             | 119  | 不带边框和倾斜标注线的标注。                               |
+| **msoShapeLineCallout4**                     | 112  | 带 U 型标注线段的标注。                                    |
+| **msoShapeLineCallout4AccentBar**            | 116  | 带强调线和 U 型标注线段的标注。                            |
+| **msoShapeLineCallout4BorderandAccentBar**   | 124  | 带边框、强调线和 U 型标注线段的标注。                      |
+| **msoShapeLineCallout4NoBorder**             | 120  | 不带边框和 U 型标注线段的标注。                            |
+| **msoShapeMixed**                            | -2   | 只返回值，表示其他状态的组合。                             |
+| **msoShapeMoon**                             | 24   | 新月形。                                                   |
+| **msoShapeNoSymbol**                         | 19   | 禁止符。                                                   |
+| **msoShapeNotchedRightArrow**                | 50   | 燕尾形右箭头。                                             |
+| **msoShapeNotPrimitive**                     | 138  | 不支持。                                                   |
+| **msoShapeOctagon**                          | 6    | 八边形。                                                   |
+| **msoShapeOval**                             | 9    | 椭圆形。                                                   |
+| **msoShapeOvalCallout**                      | 107  | 椭圆形标注。                                               |
+| **msoShapeParallelogram**                    | 2    | 平行四边形。                                               |
+| **msoShapePentagon**                         | 51   | 五边形。                                                   |
+| **msoShapePlaque**                           | 28   | 缺角矩形。                                                 |
+| **msoShapeQuadArrow**                        | 39   | 四向箭头。                                                 |
+| **msoShapeQuadArrowCallout**                 | 59   | 带四向箭头的标注。                                         |
+| **msoShapeRectangle**                        | 1    | 矩形。                                                     |
+| **msoShapeRectangularCallout**               | 105  | 矩形标注。                                                 |
+| **msoShapeRegularPentagon**                  | 12   | 五边形。                                                   |
+| **msoShapeRightArrow**                       | 33   | 右箭头。                                                   |
+| **msoShapeRightArrowCallout**                | 53   | 带右箭头的标注。                                           |
+| **msoShapeRightBrace**                       | 32   | 右大括号。                                                 |
+| **msoShapeRightBracket**                     | 30   | 右括号。                                                   |
+| **msoShapeRightTriangle**                    | 8    | 直角三角形。                                               |
+| **msoShapeRoundedRectangle**                 | 5    | 圆角矩形。                                                 |
+| **msoShapeRoundedRectangularCallout**        | 106  | 圆角矩形标注。                                             |
+| **msoShapeSmileyFace**                       | 17   | 笑脸。                                                     |
+| **msoShapeStripedRightArrow**                | 49   | 尾部带条纹的右箭头。                                       |
+| **msoShapeSun**                              | 23   | 太阳。                                                     |
+| **msoShapeTrapezoid**                        | 3    | 梯形。                                                     |
+| **msoShapeUpArrow**                          | 35   | 上箭头。                                                   |
+| **msoShapeUpArrowCallout**                   | 55   | 带上箭头的标注。                                           |
+| **msoShapeUpDownArrow**                      | 38   | 上下双向箭头。                                             |
+| **msoShapeUpDownArrowCallout**               | 58   | 带上下双向箭头的标注。                                     |
+| **msoShapeUpRibbon**                         | 97   | 中心区域位于弯带末端上方的弯带形横幅。                     |
+| **msoShapeUTurnArrow**                       | 42   | U 型箭头。                                                 |
+| **msoShapeVerticalScroll**                   | 101  | 竖卷形。                                                   |
+| **msoShapeWave**                             | 103  | 波形。                                                     |
+
+还可以使用For Each循环结构遍历Shapes对象集合中的Shape对象。
+
+```vb
+Sub ForEachAllShapes()
+    Dim objShp As Shape
+    For Each objShp In Sheets("Shape对象").Shapes
+        Debug.Print objShp.Name, Tab(30), objShp.Type, _
+            Tab(60), objShp.AutoShapeType
+    Next objShp
+    Set objShp = Nothing
+End Sub
+```
+
+Debug.Print会在立即窗口中输出
+
+## 6.2在工作表中快速添加Shape对象
+
+```vb
+Sub InsertShape()
+    Dim intxOffset As Integer
+    Dim intyOffset As Integer
+    Dim intRow As Integer
+    Dim objLine As LineFormat'声明线条对象
+    Dim objFreeForm As FreeformBuilder'声明为任意多边形对象
+    intyOffset = 50
+    intxOffset = 50
+    With Sheets("数据")
+        For intRow = 2 To 11
+            Set objLine = Sheets("绘图区").Shapes.AddLine( _
+                .Cells(intRow, 1) + intxOffset, _
+                .Cells(intRow, 2) + intyOffset, _
+                .Cells(intRow + 1, 1) + intxOffset, _
+                .Cells(intRow + 1, 2) + intyOffset).Line
+        objLine.Weight = .Cells(intRow, 3)'设置线条粗线
+            objLine.ForeColor.RGB = .Cells(intRow, 4)'设置线条前景填充色
+        Next intRow
+    End With
+    intxOffset = intxOffset + 300
+    intRow = 2
+    With Sheets("数据")
+        Set objFreeForm = Sheets("绘图区").Shapes.BuildFreeform( _
+            msoEditingAuto, _
+            .Cells(intRow, 1) + intxOffset, _
+            .Cells(intRow, 2) + intyOffset)
+        For intRow = 3 To 12
+            objFreeForm.AddNodes msoSegmentLine, msoEditingAuto, _
+                .Cells(intRow, 1) + intxOffset, _
+                .Cells(intRow, 2) + intyOffset
+        Next intRow
+        objFreeForm.ConvertToShape
+    End With
+    intxOffset = intxOffset + 300
+    Sheets("绘图区").Shapes.AddShape(msoShape5pointStar, _
+        intxOffset, intyOffset, 266.3, 253.26).Select
+    Selection.ShapeRange.Fill.ForeColor.RGB = RGB(255, 0, 0)
+    Set objLine = Nothing
+    Set objFreeForm = Nothing
+End Sub
+```
+
+结果：
+
+![image-20200223224532079](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200223224532079.png)
 
 
 
+第2行和第3行代码声明Integer类型变量用于保存图形相对于**文档左上角(即A1单元格左上角)**的偏移量。
 
+第5行声明变量为LineFormat对象，代表线条和箭头格式。
 
+第11行将AddLine方法返回的线条对象赋值给变量objLine，Shapes对象的AddLine方法创建并返回一个线条类型的对象，AddLine方法的语法如下。
 
+`AddLine(BeginX, BeginY, EndX, EndY)`
 
+这四个参数都是必选参数。其中BeginX和BeginY为线条起点相对于文档左上角的水平和垂直坐标；EndX和EndY为线条终点相对于文档左上角的水平和垂直坐标。
 
-
-
-
-
-
-
-
-
-
-
-
+在数据表中，"X坐标"是水平坐标，"Y坐标"是垂直坐标。
 
 
 
