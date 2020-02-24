@@ -112,9 +112,107 @@ End Sub
 
 注：如果VBA中已经有了相同功能的函数，就不能再通过WorksheetFunction属性引用工作表中的函数，否则会出错。并且，不是所有的工作表函数都能通过WorkshetFunction 属性来调用。
 
+## Workbook对象
 
+Workbooks是所有工作簿对象组成的集合，而Wrokbook对象是Workbooks集合的一个成员。
 
+### 1.引用集合中的工作簿
 
+利用工作簿名引用工作簿，如已经打开了"Book1.xlsm"工作簿，那么`Workbooks("Book1.xlsm")`就代表这个工作簿对象。
+
+### 2.访问对象的属性，获得工作簿文件的信息
+
+通过代码获得指定工作簿的名称、保存的路径等文件信息，示例代码如下。
+
+```vb
+Sub WbMsg()
+    Range("B2") = ThisWorkbook.Name '获得工作簿的名称
+    Range("B3") = ThisWorkbook.Path '获得工作簿文件所在的路径
+    Range("B4") = ThisWorkbook.FullName '获得带路径的工作簿名称
+End Sub
+```
+
+代码中的ThisWorkbook代表代码所在的工作簿对象。
+
+注：后缀为.xlsx的工作簿无法保存VBA代码。如果工作簿中编写了宏代码，则将工作簿保存成后缀为.xls或者.xlsm的文件。
+
+### 3.用Add方法创建工作簿
+
+```vb
+Workbooks.Add '创建空白工作簿
+```
+
+```vb
+Workbooks.Add "D:\模板.xlsm" '指定用来创建工作簿的模板
+```
+
+### 4.用Open方法打开工作簿
+
+打开一个Excel工作簿文件，最简单的方法是使用Workbooks对象的Open方法，示例代码入戏。
+
+```vb
+Workbooks.Open Filename:="D:\模板.xlsm"
+```
+
+方法Open和参数Filename之间用空格分隔，参数及参数数值之间用":="连接。
+
+在实际使用时，代码中的参数名称Filename可以省略不写，将代码写为：
+
+```vb
+Workbooks.Open "D:\模板.xlsm"
+```
+
+更改代码中的路径及文件名称，即可打开其他的工作簿文件。
+
+### 5.用Activate方法激活工作簿
+
+虽然可以同时打开多个工作簿，但同一时间只能有一个工作簿是活动的。如果想让不活动的工作簿变为活动工作簿，可以用Wrokbooks对象的Activate方法激活它。例如：
+
+```vb
+Workbooks("模板.xlsm").Activate
+```
+
+### 6.保存工作簿文件
+
+用Save方法保存已经存在的文件，例如：
+
+```vb
+ThisWorkbook.Save '保存代码所在的工作簿
+```
+
+用SaveAs方法将工作簿另存为新文件。如果是第1次保存一个新建的工作簿，或需要将工作簿另存为一个新文件时，应该使用SaveAs方法，例如：
+
+```vb
+ThisWorkbook.SaveAs Filename:="D:\Test.xlsm"
+```
+
+另存新文件后不关闭原文件。使用SaveAs方法将工作簿另存为新文件后，Excel将关闭原文件并自动打开另存为得到的新文件，如果希望继续保留原文件不打开新文件，应该使用**SaveCopyAs**方法。例如：
+
+```vb
+ThisWorkbook.SaveCopyAs Filename:="D:\Test.xlsm"
+```
+
+### 7.用Close方法关闭工作簿
+
+调用工作簿对象的Close方法，可以关闭打开的工作簿。例如：
+
+```vb
+Workbooks.Close '关闭当前打开的所有工作簿
+```
+
+可以通过索引号、名称等指定要打开的工作簿，例如：
+
+```vb
+Workbooks("Test.xlsm").Close '关闭名称为Test的工作簿
+```
+
+```vb
+Workbooks("Test.xlsm").Close savechange:=True '关闭并保存对工作簿的修改
+```
+
+### 8. ThisWorkbook与ActiveWorkbook
+
+两者都返回Workbook对象。不同之处在于，ThisWorkbook是对**代码所在工作簿**的引用，ActiveWorkbook是对**活动工作簿**的引用。
 
 # 实例代码
 
