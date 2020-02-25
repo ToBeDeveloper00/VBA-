@@ -405,7 +405,7 @@ Next Sh
   '利用循环就把图片对象都给删除了。
 ```
 
-## 生成票号
+## 3.生成票号
 
 ```
 Public Function getNewNum(numType As String, yuanNum As String) As String
@@ -444,6 +444,47 @@ Sub 生成票号()
     Range("B1") = getNewNum("", RiQiStr)
 End Sub
 ```
+
+## 将多张工作表中的数据合并到一张工作表中
+
+在工作中，我们经常遇到多张工作表合并到一张工作表的问题，比如希望将下图所示中各分表中保存的成绩记录，汇总到工作簿中的"成绩表"工作表中，可以用以下程序。
+
+```vb
+Sub hebing()
+    '把各班成绩表中的记录合并到"成绩表"工作表中
+    Dim sht As Worksheet
+    Set sht = Worksheets("成绩表")
+    sht.Rows("2:" & sht.rows.count).Clear      '删除成绩表中的原有记录
+    Dim wt As Worksheet, xrow As Integer, rng As Range
+    For Each wt In Worksheets                   '循环处理工作簿中的每张工作表
+        If wt.Name <> "成绩表" Then
+            Set rng = sht.Range("A1048576").End(xlUp).Offset(1, 0)
+            xrow = wt.Range("A1").CurrentRegion.Rows.Count - 1
+            wt.Range("A2").Resize(xrow, 7).Copy rng
+        End If
+    Next
+End Sub
+```
+
+第4行代码意思是将"成绩表"工作表赋值给sht对象，在VBA中，给对象赋值，前面必须加**Set**关键字。
+
+第5行代码中的`sht.rows.count`表示sht工作表总共有多少行；在VBA中，Rows表示工作表或某个区域中所有行组成的集合。`Rows("2:3")`表示选中工作表的第2行到第3行。
+
+第7行代码中的wt代表工作表集合中的一个工作表，随着循环变换。
+
+第9行代码表示wt工作表中数据A列下面的第一个空单元格。`Range("A1048576")`表示工作表最下面一个单元格。
+
+Range对象的End属性返回包含指定单元格的区域最尾端的单元格，返回结果等同于在单元格中按【End+方向键】(上、下、左、右方向键)组合键得到的单元格。
+
+Range对象的Offset属性获得相对于安远隔区域一定偏移位置上的单元格区域。`Offset(1, 0)`表示单元格下面一个单元格。
+
+第10行表示A1单元格所在当前区域的行数键1。
+
+第11行表示将子表中的数据复制到汇总表的空白区域。
+
+Range对象的Resize属性将指定的单元格区域有目的地扩大或缩小，得到一个新的单元格区域。`Range("B2").Resize(5,4).Select`表示将B2单元格扩展为一个5行4列的单元格区域。
+
+
 
 # 通过文件对话框选择文件
 
@@ -1669,6 +1710,14 @@ End Sub
 注：参数OrderCustom指定在自定义排序次序列表中的基于1的整数偏移，在指定该参数时需在自定义序列号基础上加1。
 
 第9行代码使用DeleteCustomList方法删除新添加的自定义序列。
+
+## 利用Array方法向单元格填加内容
+
+```vb
+Range("A1:B1")=Array("序号","姓名")
+```
+
+
 
 # 第6章 使用Shape对象
 
