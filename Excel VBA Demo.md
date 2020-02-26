@@ -2037,7 +2037,39 @@ End Sub
 
 在数据表中，"X坐标"是水平坐标，"Y坐标"是垂直坐标。
 
+第35行代码用来创建右侧的五角星对象。Shapes对象的AddShape方法返回一个Shape对象，该对象代表新添加的自选图形，其语法格式如下。
 
+`AddShape(Type,Left,Top,Width,Height)`
+
+AddShape方法的5个参数都是必需的，参数Type用来指定要添加的自选图形的类型，后面4个参数都以磅为单位。
+
+ShapeRange对象代表形状区域，Fill属性返回指定形状的FillFormat对象或指定图表的ChartFillFormat对象，这两种对象包含形状或图表的填充格式属性，可以设置Shape对象的填充色。
+
+## 6.3 组合多个Shape对象
+
+如果在工作表中存在多个Shape对象时，在工作表插入或删除单元格、改变行高或列宽时，可能改变形状的大小及它们之间的相对位置。设置自选图形的组合，可以保持组合内自选图形之间的相对位置不发生变化，并且对组合后图形的操作如同处理单个Shape对象，设置对象附加到单元格的方式为自由浮动，可以保持对象大小和位置固定不变，示例代码如下。
+
+```vb
+Sub GroupShapes()
+    Dim i As Integer
+    Dim astrLineName(1 To 10) As String'声明数组用于保存10条线段的名称。
+    For i = 1 To 10
+        astrLineName(i) = "直接连接符 " & i
+    Next i
+    With Sheet1.Shapes
+        .Range(astrLineName()).Group.Placement = xlFreeFloating
+        .Range(Array("任意多边形 11", _
+            "五角星 12")).Group.Placement = xlFreeFloating
+    End With
+    Sheet1.Shapes.SelectAll
+End Sub
+```
+
+第8行使用ShapeRange对象的Group方法将10条线条组合到一起(其中astrLineName数组作为Range属性的参数)，并且设置组合后的Shape对象不会随单元格移动或调整大小。
+
+Group方法将指定区域中的形状组合在一起，并返回一个代表组合形状的Shape对象。
+
+Placement属性返回或设置一个XlPlacement值，代表对象附加到单元格单元格的方式，XlPlacement常量值与说明如下表所示。
 
 
 
