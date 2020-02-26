@@ -2083,5 +2083,10 @@ Placement属性返回或设置一个XlPlacement值，代表对象附加到单元
 | **xlMove**         | 2    | 对象随单元格移动。           |
 | **xlMoveAndSize**  | 1    | 对象随单元格移动和调整大小。 |
 
+注：在Excel中将组合形状视为单个Shape对象，组合或取消组合形状时，Shapes对象集合中的对象个数将发生变化，索引号也会变。因此Range属性的参数应尽量采用Shape对象的名称，避免使用其索引号。
 
 
+
+![image-20200226194714643](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200226194714643.png)
+
+![image-20200226194952878](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200226194952878.png)
