@@ -2091,7 +2091,106 @@ Placement属性返回或设置一个XlPlacement值，代表对象附加到单元
 
 ![image-20200226194952878](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200226194952878.png)
 
-## 批量添加PDF文件
+
+
+## 6.4 将Shape对象另存为图片
+
+有时需要将工作表中的Shape对象保存为单独的图像文件，示例代码如下。
+
+```vb
+Sub ExportShpToGIF()
+    Dim objShp As Shape
+    Dim objCht As ChartObject
+    For Each objShp In Sheet1.Shapes
+        objShp.Copy
+        Set objCht = Sheet1.ChartObjects.Add(0, 0, objShp.Width, _
+            objShp.Height)
+        objCht.Select'没有此句将会导出空白的图片文件
+            With objCht.Chart'返回一个Chart对象，该对象代表ChartObject对象中包含的图表
+            .Paste'将剪贴板中的Shape对象以图片格式粘贴到新创建的图表中
+            .Export ThisWorkbook.Path & "\" & objShp.Name & ".gif"
+            .Parent.Delete
+        End With
+    Next objShp
+    Set objShp = Nothing
+    Set objCht = Nothing
+    MsgBox "图片导出完毕！", vbOKOnly, "将Shape对象另存为图片"
+End Sub
+```
+
+ChartObjects对象的方法用来创建新的嵌入式图表，ChartObjects对象代表图表工作表或工作表上的所有ChartObject对象组成的集合，Add方法的语法如下。
+
+`Add(Left,Top,Width,Height)`
+
+| **名称** | **必选/可选** | **数据类型** | **说明**                                                     |
+| -------- | ------------- | ------------ | ------------------------------------------------------------ |
+| *Left*   | 必选          | **Double**   | 以磅为单位给出新对象的初始坐标，该坐标是相对于工作表上单元格 A1  的左上角或图表的左上角的坐标。 |
+| *Width*  | 必选          | **Double**   | 以磅为单位给出新对象的初始大小。                             |
+
+## 6.5 编辑Shape对象的文本
+
+除了自选图形、图片、艺术字等，工作表中的表单控件和ActiveX控件也属于Shape对象，可以根据其类型采用不同的方法来操控这些Shape对象，如编辑Shape对象显示的文本，示例代码如下。
+
+```vb
+Sub EditCaption()
+    Dim objShp As Shape
+    For Each objShp In Sheet1.Shapes
+        Select Case objShp.Type
+            Case 1'判断对象是否为自选图形
+                If objShp.TextFrame2.TextRange.Text = "圆角矩形" Then
+                    objShp.TextFrame2.TextRange.Text = "图形按钮"
+                    Sheet1.Hyperlinks.Add Anchor:=objShp, _
+                        Address:="", SubAddress:="EditCaption"
+                End If
+            Case 8
+                If objShp.FormControlType = xlCheckBox Then
+                    objShp.OLEFormat.Object.Caption = "表单控件"
+                    objShp.OLEFormat.Object.Value = True
+                ElseIf objShp.FormControlType = xlButtonControl Then
+                    objShp.OLEFormat.Object.Caption = "表单按钮"
+                    objShp.OnAction = "Test"'指定要运行的宏的名称，以相应其单击事件
+                End If
+            Case 12
+                With Sheet1.OLEObjects(objShp.Name)
+                    If .progID Like "Forms.CheckBox*" Then
+                        .Object.Caption = "ActiveX控件"
+                        .Object.Value = True
+                    End If
+                End With
+        End Select
+    Next objShp
+    Set objShp = Nothing
+End Sub
+```
+
+![image-20200227203927871](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200227203927871.png)
+
+Shape对象的TextFrame2属性返回一个TextFrame2对象，该对象包含指定形状的文本格式，TextRange属性返回一个TextRange2对象，该对象代表对象中的文本，通过Text属性可以获取或设置对象显示的文本，其值为String类型。
+
+Shape对象的FormControlType属性返回一个XlFormControl值，该值代表Microsoft Excel控件(表单控件)的类型。XlFormControl常量值与说明如下表所示。
+
+| 名称                | 值   | 说明       |
+| ------------------- | ---- | ---------- |
+| **xlButtonControl** | 0    | 按钮。     |
+| **xlCheckBox**      | 1    | 复选框。   |
+| **xlDropDown**      | 2    | 组合框。   |
+| **xlEditBox**       | 3    | 文本框。   |
+| **xlGroupBox**      | 4    | 分组框。   |
+| **xlLabel**         | 5    | 标签。     |
+| **xlListBox**       | 6    | 列表框。   |
+| **xlOptionButton**  | 7    | 选项按钮。 |
+| **xlScrollBar**     | 8    | 滚动条。   |
+| **xlSpinner**       | 9    | 微调按钮。 |
+
+Shape对象的OLEFormat属性返回一个OLEFormat对象，该对象包含OLE对象的属性，Object属性返回与此OLE对象相联系的OLE自动化对象，也就是该复选框控件。
+
+OLEObject对象的progId属性返回对象的程序标识符，如果对象的程序标识符中包含"Forms.CheckBox"则说明对象是CheckBox控件。
+
+## 6.6 制作图片产品目录
+
+
+
+## 6.7 批量添加PDF文件
 
 如图1所示，"BOM-01.xlsx"工作簿中的Sheet1工作表根据B列图号单元格中的内容，在图2所示的文件夹中找到对应的PDF文件，然后嵌入到相应的N列，双击N列中所示的图标，会打开PDF文件，是源文件的副本，即删除源文件，也可以打开N列的文件。
 
@@ -2167,3 +2266,5 @@ OLEObjects.Add方法向工作表中添加新的 OLE 对象。其语法格式如�
 | *IconLabel*     | 可选          | **Variant**  | 一个字符串，指定在图标下方显示一个标签。仅当 *DisplayAsIcon* 为 **True**  时，才使用该参数。如果省略该参数，或者该参数为空字符串 ("")，则不显示任何标题。 |
 | *Left*          | 可选          | **Variant**  | 以磅为单位给出新对象的初始坐标，该坐标是相对于工作表上单元格 A1  的左上角或图表的左上角的坐标。 |
 | *Width*         | 可选          | **Variant**  | 以磅为单位给出新对象的初始大小。                             |
+
+## 
