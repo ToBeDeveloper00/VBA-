@@ -2188,7 +2188,54 @@ OLEObject对象的progId属性返回对象的程序标识符，如果对象的�
 
 ## 6.6 制作图片产品目录
 
+如果需要制作如图1所示的产品目录，因为所需图片的尺寸通常并非完全一致，所以除了插入图片，还需要调整图片的尺寸以适应"图片"列单元格的大小。使用VBA可以快速完成这一系列繁杂的操作，示例代码如下。
 
+```vb
+Sub InsertPictures()
+    Dim lngRow As Long
+    Dim objShape As Shape
+    Dim objTargetCell As Range
+    With Sheet1
+    	.Shapes.SelectAll'选中工作表中的所有Shape对象
+    	Selection.Delete'删除选中的Shape对象
+        If .Cells(3, 1).Value <> "" Then
+            For lngRow = 3 To .Cells(3, 1).End(xlDown).Row
+                Set objTargetCell = .Cells(lngRow, 3)
+                .Shapes.AddPicture(ThisWorkbook.Path & "\" & _
+                    .Cells(lngRow, 2) & ".jpg", True, True, _
+                    objTargetCell.Left + 2, objTargetCell.Top + 2, _
+                    objTargetCell.Width - 4, _
+                    objTargetCell.Height - 4).Select
+                Selection.ShapeRange.LockAspectRatio = msoFalse'取消图片的纵横比，以适应单元格大小
+            Next lngRow
+        End If
+    End With
+    Set objTargetCell = Nothing
+    Set objShape = Nothing
+End Sub
+```
+
+![image-20200227210138372](C:\Users\admin\AppData\Roaming\Typora\typora-user-images\image-20200227210138372.png)
+
+第9行代码使用Range对象的End属性获取工作表中A列最后一个非空单元格的行号作为循环的终值。
+
+第11行代码中使用Shape对象的AddPicture方法插入花卉图片，图片文件以花卉名称作为文件名，扩展名为JPG，保存在工作簿所在目录中。代码中的`ThisWorkbook.Path`返回当前工作簿所在的目录名称。
+
+AddPicture方法从现有文件创建图片并返回代表新图片的Shape对象，其语法格式如下。
+
+`AddPicture(Filename, LinkToFile, SaveWithDocument,  Left, Top, Width, Height)`
+
+AddPicture方法的所有参数都是必需的。
+
+| **名称**           | **必选/可选** | **数据类型**                                                 | **说明**                                                     |
+| ------------------ | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| *Filename*         | 必选          | **String**                                                   | 要在其中创建 OLE 对象的文件的路径和文件名。                  |
+| *LinkToFile*       | 必选          | **[MsoTriState](http://r.office.microsoft.com/r/rlidAWSContentRedir?AssetID=HV100731092052&CTT=11&Origin=HV103322662052)** | 要链接至的文件。代表图片对象与源文件之间的关系，使图片成为其源文件的独立副本则为msoFalse，建立图片与其源文件之间的链接则为msoTrue. |
+| *SaveWithDocument* | 必选          | **[MsoTriState](http://r.office.microsoft.com/r/rlidAWSContentRedir?AssetID=HV100731092052&CTT=11&Origin=HV103322662052)** | 将图片与文档一起保存。在文档中只存储链接信息则为msoFalse，将链接图片与该图片插入的文档一起保存则为msoTrue。如果参数LinkToFile为msoFalse，则该参数必须为msoTrue。 |
+| *Left*             | 必选          | **Single**                                                   | 图片左上角相对于文档左上角的位置（以磅为单位）。             |
+| *Top*              | 必选          | **Single**                                                   | 图片左上角相对于文档顶部的位置（以磅为单位）。               |
+| *Width*            | 必选          | **Single**                                                   | 图片的宽度（以磅为单位）。                                   |
+| *Height*           | 必选          | **Single**                                                   | 图片的高度（以磅为单位）。                                   |
 
 ## 6.7 批量添加PDF文件
 
